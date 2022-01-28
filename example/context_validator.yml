@@ -1,0 +1,7 @@
+owner:
+  id: 88025e7e-1268-4491-8756-221970905a18
+
+# List of contexts
+contexts:
+  - name: cps legacy-production
+    description: Used for ec2 production environment
