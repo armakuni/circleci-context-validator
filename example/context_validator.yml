@@ -1,0 +1,7 @@
+owner:
+  id: ***REMOVED***
+
+# List of contexts
+contexts:
+  - name: cps legacy-production
+    description: Used for ec2 production environment
