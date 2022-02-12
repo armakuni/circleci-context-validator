@@ -1,18 +1,5 @@
 import {expect, test} from '@oclif/test'
-import * as os from 'node:os'
-import * as fs from 'node:fs'
-import * as path from 'node:path'
-import * as yaml from 'js-yaml'
-
-const TEMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'circleci-context-validator-tests'))
-
-function tempFilePath(filename: string): string {
-  return path.join(TEMP_DIR, filename)
-}
-
-function createTempYamlFile(filename: string, content: any): void {
-  fs.writeFileSync(tempFilePath(filename), yaml.dump(content))
-}
+import {createTempYamlFile, tempFilePath} from '../../helpers/test-files'
 
 describe('circleci validate', () => {
   test
