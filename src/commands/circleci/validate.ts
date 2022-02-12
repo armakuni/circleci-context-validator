@@ -1,5 +1,5 @@
-import {Command, Flags} from '@oclif/core'
-import isValid from '../../lib/config_validator'
+import {Command} from '@oclif/core'
+import isValid from '../../lib/config-validator'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -21,7 +21,7 @@ export default class Validate extends Command {
   //   }),
   // };
 
-  public async run() {
+  public async run(): Promise<void> {
     // const { flags: args } = this.parse(CreateStack);
     // const envVar = 'CIRCLE_CI_PERSONAL_API_TOKEN';
     // if (process.env[envVar] === undefined) {
@@ -43,5 +43,7 @@ export default class Validate extends Command {
     // });
 
     isValid()
+
+    this.log('Success')
   }
 }
