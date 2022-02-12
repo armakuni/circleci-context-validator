@@ -10,29 +10,27 @@ export default async function isValid(): Promise<boolean> {
   const ajv =  new Ajv({allErrors: true})
 
   // Load in users context validator config file parse into data JS data structure
-  const jsonProjectConfigContents = null
   try {
     const yamlProjectConfigPath = join(__dirname, '../../example/context_validator.yml')
     const yamlProjectConfigContents = await readFile(yamlProjectConfigPath, 'utf8')
     const jsonProjectConfigContents = load(yamlProjectConfigContents, {json: true})
-    // const data = {owner: {id: "***REMOVED***"}, contexts: [], nothere: ""}
 
     console.log(JSON.stringify(jsonProjectConfigContents, null, '\t'))
+
+    // compile schema for validation
+    const validate = ajv.compile(schema)
+
+    const valid = validate(jsonProjectConfigContents)
+    if (!valid) {
+      console.log('Errored :(', validate.errors as ErrorObject[])
+
+      const output = betterAjvErrors(schema, jsonProjectConfigContents, validate.errors as ErrorObject[])
+      console.log(output)
+
+      return false
+    }
   } catch (error) {
     console.log('Unable to process project config', error)
-  }
-
-  // compile schema for validation
-  const validate = ajv.compile(schema)
-
-  const valid = validate(jsonProjectConfigContents)
-  if (!valid) {
-    console.log('Errored :(', validate.errors as ErrorObject[])
-
-    const output = betterAjvErrors(schema, jsonProjectConfigContents, validate.errors as ErrorObject[])
-    console.log(output)
-
-    return false
   }
 
   return true

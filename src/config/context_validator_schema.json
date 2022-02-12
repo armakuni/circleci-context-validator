@@ -14,7 +14,7 @@
         "id": {
           "title": "Id",
           "type": "string",
-		  "description": "The unique identifier UUID for the owner of a context",
+		      "description": "The unique identifier UUID for the owner of a context",
           "default": "",
           "examples": ["80025e7e-1268-4491-8656-221970905a18"],
           "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
@@ -25,7 +25,7 @@
       "title": "Contexts",
       "type": "array",
       "default": [],
-	  "minItems": 1,
+	    "minItems": 1,
       "items": {
         "title": "Items",
         "type": "object",
@@ -36,7 +36,7 @@
             "type": "string",
             "default": "",
             "examples": ["legacy-production"],
-            "pattern": "^[a-zA-Z0-9_-]$"
+            "pattern": "^[a-zA-Z0-9_-]+$"
           },
           "purpose": {
             "title": "Purpose",
@@ -73,8 +73,8 @@
                     "title": "Labels",
                     "type": "array",
                     "default": [],
-					"maxItems": 10,
-      				"uniqueItems": true,
+					          "maxItems": 10,
+      				      "uniqueItems": true,
                     "items": {
                       "title": "Items",
                       "type": "string",
