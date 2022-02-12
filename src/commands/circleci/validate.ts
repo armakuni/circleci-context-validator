@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
-import isValid from '../../lib/config-validator'
 import {loadYamlFile} from '../../lib/yaml-files'
+import isValid from '../../config/validator'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
