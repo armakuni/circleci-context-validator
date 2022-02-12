@@ -1,7 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import isValid from '../../lib/config-validator'
-import {readFile} from 'node:fs/promises'
-import {load} from 'js-yaml'
+import {loadYamlFile} from '../../lib/yaml-files'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -46,8 +45,7 @@ export default class Validate extends Command {
     // });
 
     const yamlProjectConfigPath = flags['context-definitions']
-    const yamlProjectConfigContents = await readFile(yamlProjectConfigPath, 'utf8')
-    const jsonProjectConfigContents = load(yamlProjectConfigContents, {json: true})
+    const jsonProjectConfigContents = await loadYamlFile(yamlProjectConfigPath)
 
     isValid(jsonProjectConfigContents)
 
