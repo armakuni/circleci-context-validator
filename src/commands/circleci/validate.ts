@@ -1,5 +1,7 @@
-import {Command} from '@oclif/core'
+import {Command, Flags} from '@oclif/core'
 import isValid from '../../lib/config-validator'
+import {readFile} from 'node:fs/promises'
+import {load} from 'js-yaml'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -9,20 +11,21 @@ export default class Validate extends Command {
     '$ run circleci:validate --context-definitions contexts.yml --circleci-config .circleci/config.yaml',
   ];
 
-  // public static flags = {
-  //   help: Flags.help({ char: 'h' }),
-  //   'context-definitions': Flags.string({
-  //     required: false,
-  //     description: 'A YAML file which describes which contexts to check',
-  //   }),
+  public static flags = {
+    help: Flags.help({char: 'h'}),
+    'context-definitions': Flags.string({
+      required: true,
+      description: 'A YAML file which describes which contexts to check',
+    }),
   //   'circleci-config': Flags.string({
   //     required: false,
   //     description: 'The config file for CircleCI',
   //   }),
-  // };
+  };
 
   public async run(): Promise<void> {
-    // const { flags: args } = this.parse(CreateStack);
+    const {flags} = await this.parse(Validate)
+
     // const envVar = 'CIRCLE_CI_PERSONAL_API_TOKEN';
     // if (process.env[envVar] === undefined) {
     //   this.error(`${envVar} environment variable is not set`, {
@@ -42,7 +45,11 @@ export default class Validate extends Command {
     //   ],
     // });
 
-    isValid()
+    const yamlProjectConfigPath = flags['context-definitions']
+    const yamlProjectConfigContents = await readFile(yamlProjectConfigPath, 'utf8')
+    const jsonProjectConfigContents = load(yamlProjectConfigContents, {json: true})
+
+    isValid(jsonProjectConfigContents)
 
     this.log('Success')
   }

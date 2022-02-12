@@ -8,6 +8,22 @@
  *          - tooling
  *          - aws
  */
+
+export interface Config {
+  owner: Owner
+  contexts: Context[]
+}
+
+export interface Owner {
+  id: string
+}
+
+export interface Context {
+  name: string
+  purpose: string
+  'environment-variables': EnvVarEntry
+}
+
 /**
  * Container interface for the environment variable name and it's corresponding metadata values
  */
@@ -19,7 +35,7 @@ export interface EnvVarEntry {
  * The metadata values of the environment variable key
  */
 export interface EnvVarContents {
-    state: StateEnum
+    state: EnvVarState
     purpose: string
     labels: string[]
 }
@@ -27,6 +43,6 @@ export interface EnvVarContents {
 /**
  * Enum to control the lifecycle state of an environment variable
  */
-export enum StateEnum {
+export enum EnvVarState {
     active, optional, deprecated
 }
