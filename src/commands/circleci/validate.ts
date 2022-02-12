@@ -1,5 +1,5 @@
-import { Command, Flags } from '@oclif/core';
-import isValid from '../../lib/config_validator';
+import {Command, Flags} from '@oclif/core'
+import isValid from '../../lib/config_validator'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
