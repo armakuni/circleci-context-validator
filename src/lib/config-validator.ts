@@ -2,7 +2,7 @@ import Ajv, {ErrorObject} from 'ajv'
 import {readFile} from 'node:fs/promises'
 import {join} from 'node:path'
 import * as schema from '../config/context_validator_schema.json'
-import {load} from 'js-yaml' // todo potentially use this over ajv?
+import {load} from 'js-yaml'
 import betterAjvErrors from 'better-ajv-errors'
 
 export default async function isValid(): Promise<boolean> {
