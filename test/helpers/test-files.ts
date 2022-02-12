@@ -9,6 +9,7 @@ export function tempFilePath(filename: string): string {
   return path.join(TEMP_DIR, filename)
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function createTempYamlFile(filename: string, content: any): void {
   fs.writeFileSync(tempFilePath(filename), yaml.dump(content))
 }
