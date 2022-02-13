@@ -3,24 +3,16 @@ import Ajv, {ErrorObject} from 'ajv'
 import * as schema from './context_validator_schema.json'
 import betterAjvErrors from 'better-ajv-errors'
 
-export default function isValid(jsonProjectConfigContents: Config | unknown): jsonProjectConfigContents is Config {
-  // Schema validator to include all errors, not fail at the first.
+export function validate(input: unknown): Config {
   const ajv = new Ajv({allErrors: true})
 
-  // Load in users context validator config file parse into data JS data structure
-  console.log(JSON.stringify(jsonProjectConfigContents, null, '\t'))
-
-  // compile schema for validation
   const validate = ajv.compile(schema)
-
-  const valid = validate(jsonProjectConfigContents)
+  const valid = validate(input)
 
   if (!valid) {
-    console.log('Errored :(', validate.errors as ErrorObject[])
-
-    const output = betterAjvErrors(schema, jsonProjectConfigContents, validate.errors as ErrorObject[])
+    const output = betterAjvErrors(schema, input, validate.errors as ErrorObject[])
     throw new Error(output)
   }
 
-  return true
+  return input as Config
 }
