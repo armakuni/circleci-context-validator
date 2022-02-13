@@ -5,11 +5,13 @@
   "description": "Container object for context env var validation",
   "type": "object",
   "required": ["owner", "contexts"],
+  "additionalProperties": false,
   "properties": {
     "owner": {
       "title": "Owner",
       "type": "object",
       "required": ["id"],
+      "additionalProperties": false,
       "properties": {
         "id": {
           "title": "Id",
@@ -30,6 +32,7 @@
         "title": "Items",
         "type": "object",
         "required": ["name", "purpose", "environment-variables"],
+        "additionalProperties": false,
         "properties": {
           "name": {
             "title": "Name",

@@ -21,28 +21,21 @@ export interface Owner {
 export interface Context {
   name: string
   purpose: string
-  'environment-variables': EnvVarEntry
+  'environment-variables': EnvVarBlock
 }
 
 /**
  * Container interface for the environment variable name and it's corresponding metadata values
  */
-export interface EnvVarEntry {
-    [keyName: string] : EnvVarContents
+export interface EnvVarBlock {
+    [keyName: string] : EnvVar
 }
 
 /**
  * The metadata values of the environment variable key
  */
-export interface EnvVarContents {
-    state: EnvVarState
+export interface EnvVar {
+    state: string
     purpose: string
     labels: string[]
-}
-
-/**
- * Enum to control the lifecycle state of an environment variable
- */
-export enum EnvVarState {
-    active, optional, deprecated
 }
