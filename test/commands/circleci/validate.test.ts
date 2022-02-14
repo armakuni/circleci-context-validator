@@ -12,7 +12,7 @@ describe('circleci validate', () => {
       contexts: [
         {
           name: 'legacy-production',
-          purpose: 'Used for ec2 production environment # What is the purpose of this context',
+          purpose: 'Used for ec2 production environment',
           'environment-variables': {
             AWS_SECRET_KEY_VALUE: {
               state: 'required',

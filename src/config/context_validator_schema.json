@@ -51,40 +51,38 @@
           "environment-variables": {
             "title": "Environment-variables",
             "type": "object",
-            "patternProperties": {
-              "^[a-zA-Z0-9_-]$": {
-                "title": "ENVIRONMENT VARIABLE",
-                "type": "object",
-                "required": ["state", "purpose", "labels"],
-                "properties": {
-                  "state": {
-                    "title": "State",
-                    "enum": ["required", "optional"],
-                    "default": "",
-                    "examples": ["required", "optional"]
-                  },
-                  "purpose": {
-                    "title": "Purpose",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["state", "purpose"],
+              "additionalProperties": false,
+              "properties": {
+                "state": {
+                  "title": "State",
+                  "enum": ["required", "optional"],
+                  "default": "",
+                  "examples": ["required", "optional"]
+                },
+                "purpose": {
+                  "title": "Purpose",
+                  "type": "string",
+                  "default": "",
+                  "examples": [
+                    "AWS API usage with CLI Tool for assuming roles"
+                  ],
+                  "pattern": "^.+$"
+                },
+                "labels": {
+                  "title": "Labels",
+                  "type": "array",
+                  "default": [],
+                  "maxItems": 10,
+                  "uniqueItems": true,
+                  "items": {
+                    "title": "Items",
                     "type": "string",
                     "default": "",
-                    "examples": [
-                      "AWS API usage with CLI Tool for assuming roles"
-                    ],
+                    "examples": ["tooling, aws, metrics, legacy, poc"],
                     "pattern": "^.+$"
-                  },
-                  "labels": {
-                    "title": "Labels",
-                    "type": "array",
-                    "default": [],
-					          "maxItems": 10,
-      				      "uniqueItems": true,
-                    "items": {
-                      "title": "Items",
-                      "type": "string",
-                      "default": "",
-                      "examples": ["tooling, aws, metrics, legacy, poc"],
-                      "pattern": "^.+$"
-                    }
                   }
                 }
               }
