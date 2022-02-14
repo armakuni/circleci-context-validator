@@ -123,40 +123,40 @@ describe('validator', () => {
         context('for an environment variable', () => {
           xit('throws an error when name is bad', () => {
             delete config.contexts[0]['environment-variables']['bad! !name']
-            expect(() => validate(config)).to.throw(Error, /must have required property 'environment-variables'/)
+            expect(() => validate(config)).to.throw(Error, /bad name/)
           })
 
-          xit('throws an error extra properties are defined', () => {
+          it('throws an error extra properties are defined', () => {
             config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.unknown = 'hello'
             expect(() => validate(config)).to.throw(Error, /must NOT have additional properties/)
           })
 
           context('.purpose', () => {
-            xit('throws an error when missing', () => {
+            it('throws an error when missing', () => {
               delete config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.purpose
               expect(() => validate(config)).to.throw(Error, /must have required property 'purpose'/)
             })
 
-            xit('throws an error when not a string', () => {
+            it('throws an error when not a string', () => {
               config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.purpose = 1
               expect(() => validate(config)).to.throw(Error, /must be string/)
             })
           })
 
           context('.state', () => {
-            xit('throws an error when missing', () => {
+            it('throws an error when missing', () => {
               delete config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.state
               expect(() => validate(config)).to.throw(Error, /must have required property 'state'/)
             })
 
-            xit('throws an error when not a string', () => {
+            it('throws an error when not a string', () => {
               config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.state = 1
-              expect(() => validate(config)).to.throw(Error, /must be string/)
+              expect(() => validate(config)).to.throw(Error, /must be equal to one of the allowed values/)
             })
 
-            xit('throws an error when invalid', () => {
+            it('throws an error when invalid', () => {
               config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.state = 'invalid state'
-              expect(() => validate(config)).to.throw(Error, /invalid/)
+              expect(() => validate(config)).to.throw(Error, /must be equal to one of the allowed values/)
             })
 
             it('returns the config when it is set to "required"', () => {
@@ -181,13 +181,13 @@ describe('validator', () => {
               expect(validate(config)).to.eql(config)
             })
 
-            xit('throws an error when not an array', () => {
-              config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.state = 1
+            it('throws an error when not an array', () => {
+              config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.labels = 1
               expect(() => validate(config)).to.throw(Error, /must be array/)
             })
 
-            xit('throws containing non string items', () => {
-              config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.state = [1]
+            it('throws containing non string items', () => {
+              config.contexts[0]['environment-variables'].AWS_SECRET_KEY_VALUE.labels = [1]
               expect(() => validate(config)).to.throw(Error, /must be string/)
             })
           })
