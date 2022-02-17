@@ -11,7 +11,8 @@ export function validate(input: unknown): Config {
 
   if (!valid) {
     const output = betterAjvErrors(schema, input, validate.errors as ErrorObject[])
-    throw new Error(output)
+
+    throw new Error(JSON.stringify(output))
   }
 
   return input as Config
