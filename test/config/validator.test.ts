@@ -121,9 +121,10 @@ describe('validator', () => {
         })
 
         context('for an environment variable', () => {
-          xit('throws an error when name is bad', () => {
-            delete config.contexts[0]['environment-variables']['bad! !name']
-            expect(() => validate(config)).to.throw(Error, /bad name/)
+          it('throws an error when name is bad', () => {
+            config.contexts[0]['environment-variables']['++bad!!name++'] =  {}
+            // This is a bit of a misleading error, but that's what the JSON schema validation error provides
+            expect(() => validate(config)).to.throw(Error, /must NOT have additional properties/)
           })
 
           it('throws an error extra properties are defined', () => {
