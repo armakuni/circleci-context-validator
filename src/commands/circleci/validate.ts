@@ -1,6 +1,8 @@
 import {Command, Flags} from '@oclif/core'
 import {loadYamlFile} from '../../lib/yaml-files'
 import {validate} from '../../config/validator'
+import {Environment, loadEnvironment} from '../../lib/environment'
+import fetch from 'node-fetch'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -24,17 +26,7 @@ export default class Validate extends Command {
 
   public async run(): Promise<void> {
     const {flags} = await this.parse(Validate)
-
-    // const envVar = 'CIRCLE_CI_PERSONAL_API_TOKEN';
-    // if (process.env[envVar] === undefined) {
-    //   this.error(`${envVar} environment variable is not set`, {
-    //     code: 'MISSING_API_TOKEN',
-    //     suggestions: [
-    //       'Set CIRCLE_CI_PERSONAL_API_TOKEN to a Personal API Token for CircleCI',
-    //       'For details on creating a Personal API Token, see https://circleci.com/docs/2.0/managing-api-tokens/#creating-a-personal-api-token',
-    //     ],
-    //   });
-    // }
+    const environment = this.loadEnvironment()
 
     // this.error('CIRCLE_CI_PERSONAL_API_TOKEN is invalid', {
     //   code: 'MISSING_API_TOKEN',
@@ -49,8 +41,30 @@ export default class Validate extends Command {
 
     const config = validate(jsonProjectConfigContents)
 
-    this.log(config.owner.id)
+    const response = await fetch(`https://circleci.com/api/v2/context?owner-id=${config.owner.id}`, {
+      headers: {
+        'Circle-Token': environment.CIRCLECI_PERSONAL_ACCESS_TOKEN,
+      },
+    })
+
+    this.log(response.status.toString())
+
+    this.log(JSON.stringify(await response.json()))
 
     this.log('Success')
+  }
+
+  private loadEnvironment(): Environment {
+    try {
+      return loadEnvironment()
+    } catch (error) {
+      this.error((error as Error).toString(), {
+        code: 'MISSING_API_TOKEN',
+        suggestions: [
+          'Set CIRCLECI_PERSONAL_ACCESS_TOKEN to a Personal API Token for CircleCI',
+          'For details on creating a Personal API Token, see https://circleci.com/docs/2.0/managing-api-tokens/#creating-a-personal-api-token',
+        ],
+      })
+    }
   }
 }

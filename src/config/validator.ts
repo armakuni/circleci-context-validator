@@ -1,6 +1,6 @@
 import {Config} from './config'
 import Ajv, {ErrorObject} from 'ajv'
-import * as schema from './context_validator_schema.json'
+import {schema} from './schema'
 import betterAjvErrors from 'better-ajv-errors'
 
 export function validate(input: unknown): Config {
@@ -12,8 +12,8 @@ export function validate(input: unknown): Config {
   if (!valid) {
     const output = betterAjvErrors(schema, input, validate.errors as ErrorObject[])
 
-    throw new Error(JSON.stringify(output))
+    throw new Error(output)
   }
 
-  return input as Config
+  return input
 }
