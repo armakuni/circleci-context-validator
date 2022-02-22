@@ -6,7 +6,7 @@ import {expect} from 'chai'
 describe('yaml-files', () => {
   describe('loadYamlFile', () => {
     it('loads the YAML file', async () => {
-      createTempYamlFile('example.yml', {message: 'hello world'})
+      createTempYamlFile('example.yml', {message: 'hello world'})()
       const data = await loadYamlFile(tempFilePath('example.yml'))
       expect(data).to.eql({message: 'hello world'})
     })
