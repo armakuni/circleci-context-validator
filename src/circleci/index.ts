@@ -47,10 +47,10 @@ const getContextsResponseSchema: JSONSchemaType<GetContextsResponse> = {
 }
 
 export async function fetchContexts(ownerId: string, personalAccessToken: string): Promise<any> {
-  return validateGetContextsResponse(await requestContexts(ownerId, personalAccessToken)).items
+  return validateGetContextsResponse(await requestContexts(personalAccessToken, ownerId)).items
 }
 
-async function requestContexts(ownerId: string, personalAccessToken: string) {
+async function requestContexts(personalAccessToken: string, ownerId: string) {
   const response = await fetch(`https://circleci.com/api/v2/context?owner-id=${ownerId}`, {
     headers: {
       'Circle-Token': personalAccessToken,
