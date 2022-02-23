@@ -29,18 +29,18 @@ export default class Validate extends Command {
 
   public async run(): Promise<void> {
     const {flags} = await this.parse(Validate)
+
     const environment = this.loadEnvironment()
+    const config = await Validate.loadConfig(flags['context-definitions'])
+    const fetchedContexts = await this.fetchCircleCIContexts(config, environment)
 
-    const yamlProjectConfigPath = flags['context-definitions']
-    const jsonProjectConfigContents = await loadYamlFile(yamlProjectConfigPath)
-
-    const config = validate(jsonProjectConfigContents)
-
-    const result = await this.fetchCircleCIContexts(config, environment)
-
-    this.log(JSON.stringify(result))
+    this.log(JSON.stringify(fetchedContexts))
 
     this.log('Success')
+  }
+
+  private static async loadConfig(configPath: string) {
+    return validate(await loadYamlFile(configPath))
   }
 
   private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<GetContextsResponse> {
