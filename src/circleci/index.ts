@@ -47,6 +47,10 @@ const getContextsResponseSchema: JSONSchemaType<GetContextsResponse> = {
 }
 
 export async function fetchContexts(ownerId: string, personalAccessToken: string): Promise<any> {
+  return validateGetContextsResponse(await requestContexts(ownerId, personalAccessToken)).items
+}
+
+async function requestContexts(ownerId: string, personalAccessToken: string) {
   const response = await fetch(`https://circleci.com/api/v2/context?owner-id=${ownerId}`, {
     headers: {
       'Circle-Token': personalAccessToken,
@@ -57,8 +61,10 @@ export async function fetchContexts(ownerId: string, personalAccessToken: string
     throw new ApiRequestError(`Failed to make request to CircleCI API: [${response.status}] ${await response.text()}`)
   }
 
-  const contexts = await response.json()
+  return response.json()
+}
 
+function validateGetContextsResponse(contexts: any): GetContextsResponse {
   const ajv = new Ajv({allErrors: true})
   const validate = ajv.compile(getContextsResponseSchema)
   const valid = validate(contexts)
@@ -69,5 +75,5 @@ export async function fetchContexts(ownerId: string, personalAccessToken: string
     throw new BadApiResponseDataError(output)
   }
 
-  return contexts.items
+  return contexts
 }
