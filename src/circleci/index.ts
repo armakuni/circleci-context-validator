@@ -2,8 +2,10 @@ import fetch from 'node-fetch'
 import Ajv, {ErrorObject, JSONSchemaType} from 'ajv'
 import betterAjvErrors from 'better-ajv-errors'
 import {schema} from '../config/schema'
+import ApiRequestError from './api-request-error'
+import BadApiResponseDataError from './bad-api-response-data-error'
 
-interface GetContextsResponse {
+export interface GetContextsResponse {
   items: ContextItem[]
 }
 
@@ -52,7 +54,7 @@ export async function fetchContexts(ownerId: string, personalAccessToken: string
   })
 
   if (response.status !== 200) {
-    throw new Error(`Failed to make request to CircleCI API: [${response.status}] ${await response.text()}`)
+    throw new ApiRequestError(`Failed to make request to CircleCI API: [${response.status}] ${await response.text()}`)
   }
 
   const contexts = await response.json()
@@ -64,7 +66,7 @@ export async function fetchContexts(ownerId: string, personalAccessToken: string
   if (!valid) {
     const output = betterAjvErrors(schema, contexts, validate.errors as ErrorObject[])
 
-    throw new Error(output)
+    throw new BadApiResponseDataError(output)
   }
 
   return contexts.items

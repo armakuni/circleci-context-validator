@@ -3,6 +3,8 @@ import * as chai from 'chai'
 import {expect} from 'chai'
 import {fetchContexts} from '../../src/circleci'
 import * as chaiAsPromised from 'chai-as-promised'
+import BadApiResponseDataError from '../../src/circleci/bad-api-response-data-error'
+import ApiRequestError from '../../src/circleci/api-request-error'
 
 chai.use(chaiAsPromised)
 
@@ -16,7 +18,7 @@ describe('circleci', () => {
       .reply(500, 'an error occurred')
 
       return expect(fetchContexts('88025e7e-1268-4491-8756-221970905a18', 'example-token'))
-      .to.be.rejectedWith(Error, 'Failed to make request to CircleCI API: [500] an error occurred')
+      .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] an error occurred')
     })
 
     it('throws when 401 error returned', () => {
@@ -27,7 +29,7 @@ describe('circleci', () => {
       .reply(401, 'not authorized')
 
       return expect(fetchContexts('88025e7e-1268-4491-8756-221970905a18', 'example-token'))
-      .to.be.rejectedWith(Error, 'Failed to make request to CircleCI API: [401] not authorized')
+      .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [401] not authorized')
     })
 
     it('throws when items is missing', () => {
@@ -38,7 +40,7 @@ describe('circleci', () => {
       .reply(200, {})
 
       return expect(fetchContexts('88025e7e-1268-4491-8756-221970905a18', 'example-token'))
-      .to.be.rejectedWith(Error, /must have required property 'items'/)
+      .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'items'/)
     })
 
     it('throws when name is missing from a context', () => {
@@ -55,7 +57,7 @@ describe('circleci', () => {
       })
 
       return expect(fetchContexts('88025e7e-1268-4491-8756-221970905a18', 'example-token'))
-      .to.be.rejectedWith(Error, /must have required property 'name'/)
+      .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'name'/)
     })
 
     it('throws when id is missing from a context', () => {
@@ -72,7 +74,7 @@ describe('circleci', () => {
       })
 
       return expect(fetchContexts('88025e7e-1268-4491-8756-221970905a18', 'example-token'))
-      .to.be.rejectedWith(Error, /must have required property 'id'/)
+      .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'id'/)
     })
 
     it('returns the list of contexts', () => {
