@@ -14,7 +14,7 @@ interface ContextItem {
   id: string
 }
 
-const listContextResponseSchema: JSONSchemaType<GetContextsResponse> = {
+const getContextsResponseSchema: JSONSchemaType<GetContextsResponse> = {
   definitions: {},
   $schema: 'http://json-schema.org/draft-07/schema#',
   title: 'Root',
@@ -60,7 +60,7 @@ export async function fetchContexts(ownerId: string, personalAccessToken: string
   const contexts = await response.json()
 
   const ajv = new Ajv({allErrors: true})
-  const validate = ajv.compile(listContextResponseSchema)
+  const validate = ajv.compile(getContextsResponseSchema)
   const valid = validate(contexts)
 
   if (!valid) {
