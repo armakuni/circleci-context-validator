@@ -2,7 +2,7 @@ import {Command, Flags} from '@oclif/core'
 import {loadYamlFile} from '../../lib/yaml-files'
 import {validate} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
-import fetch from 'node-fetch'
+import {fetchContexts} from '../../circleci'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -28,28 +28,19 @@ export default class Validate extends Command {
     const {flags} = await this.parse(Validate)
     const environment = this.loadEnvironment()
 
-    // this.error('CIRCLE_CI_PERSONAL_API_TOKEN is invalid', {
-    //   code: 'MISSING_API_TOKEN',
-    //   suggestions: [
-    //     'Set CIRCLE_CI_PERSONAL_API_TOKEN to a Personal API Token for CircleCI',
-    //     'For details on creating a Personal API Token, see https://circleci.com/docs/2.0/managing-api-tokens/#creating-a-personal-api-token',
-    //   ],
-    // });
-
     const yamlProjectConfigPath = flags['context-definitions']
     const jsonProjectConfigContents = await loadYamlFile(yamlProjectConfigPath)
 
     const config = validate(jsonProjectConfigContents)
 
-    const response = await fetch(`https://circleci.com/api/v2/context?owner-id=${config.owner.id}`, {
-      headers: {
-        'Circle-Token': environment.CIRCLECI_PERSONAL_ACCESS_TOKEN,
-      },
-    })
-
-    this.log(response.status.toString())
-
-    this.log(JSON.stringify(await response.json()))
+    try {
+      const result = await fetchContexts(config.owner.id, environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
+      this.log(JSON.stringify(result))
+    } catch (error) {
+      this.error('CircleCI API request failed: \n' + (error as Error).toString(), {
+        code: 'CIRCLECI_API_REQUEST_FAILED',
+      })
+    }
 
     this.log('Success')
   }

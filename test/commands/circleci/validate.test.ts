@@ -30,7 +30,7 @@ describe('circleci validate', () => {
   .get('/api/v2/context')
   .query({'owner-id': '***REMOVED***'})
   .matchHeader('circle-token', 'pat123')
-  .reply(201,
+  .reply(200,
     {
       next_page_token: 'next-page-token', // eslint-disable-line camelcase
       items: [{
@@ -73,4 +73,39 @@ describe('circleci validate', () => {
     expect(error.toString()).to.contain('CIRCLECI_PERSONAL_ACCESS_TOKEN environment variable is not set')
   })
   .it('errors when access token env var is missing')
+
+  test
+  .do(setEnvVar('CIRCLECI_PERSONAL_ACCESS_TOKEN', 'pat123'))
+  .do(
+    createTempYamlFile('valid_config.yml', {
+      owner: {
+        id: '***REMOVED***',
+      },
+
+      contexts: [
+        {
+          name: 'legacy-production',
+          purpose: 'Used for ec2 production environment',
+          'environment-variables': {
+            AWS_SECRET_KEY_VALUE: {
+              state: 'required',
+              purpose: 'Required for AWS API usage on CLI Tool',
+              labels: ['tooling', 'aws'],
+            },
+          },
+        },
+      ],
+    }),
+  )
+  .nock('https://circleci.com', api => api
+  .get('/api/v2/context')
+  .query({'owner-id': '***REMOVED***'})
+  .matchHeader('circle-token', 'pat123')
+  .reply(500, {}),
+  )
+  .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
+  .catch(error => {
+    expect(error.toString()).to.contain('CircleCI API request failed')
+  })
+  .it('errors when access CircleCI API request fails')
 })
