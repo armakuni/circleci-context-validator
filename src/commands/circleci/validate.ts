@@ -2,7 +2,10 @@ import {Command, Flags} from '@oclif/core'
 import {loadYamlFile} from '../../lib/yaml-files'
 import {validate} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
-import {fetchContexts} from '../../circleci'
+import {fetchContexts, GetContextsResponse} from '../../circleci'
+import ApiRequestError from '../../circleci/api-request-error'
+import BadApiResponseDataError from '../../circleci/bad-api-response-data-error'
+import {Config} from '../../config/config'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -33,16 +36,25 @@ export default class Validate extends Command {
 
     const config = validate(jsonProjectConfigContents)
 
-    try {
-      const result = await fetchContexts(config.owner.id, environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
-      this.log(JSON.stringify(result))
-    } catch (error) {
-      this.error('CircleCI API request failed: \n' + (error as Error).toString(), {
-        code: 'CIRCLECI_API_REQUEST_FAILED',
-      })
-    }
+    const result = await this.fetchCircleCIContexts(config, environment)
+
+    this.log(JSON.stringify(result))
 
     this.log('Success')
+  }
+
+  private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<GetContextsResponse> {
+    try {
+      return await fetchContexts(config.owner.id, environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
+    } catch (error) {
+      if (error instanceof ApiRequestError || error instanceof BadApiResponseDataError) {
+        this.error('CircleCI API request failed: \n' + (error as Error).toString(), {
+          code: 'CIRCLECI_API_REQUEST_FAILED',
+        })
+      }
+
+      throw error
+    }
   }
 
   private loadEnvironment(): Environment {
