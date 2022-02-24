@@ -1,5 +1,5 @@
 import * as nock from 'nock'
-import {v2ApiFetcher} from '../../src/circleci/v2-api'
+import {createFetcher, createRequest} from '../../src/circleci/v2-api'
 import {Validator, ValidatorError} from '../../src/validator'
 import {expect} from 'chai'
 import * as chai from 'chai'
@@ -10,6 +10,8 @@ chai.use(chaiAsPromised)
 
 describe('v2-api', () => {
   describe('v2ApiFetcher', () => {
+    const fetcher = createFetcher('access-token')
+
     it('throws when response is not 200', () => {
       nock('https://circleci.com')
       .get('/api/v2/example-resource')
@@ -19,7 +21,7 @@ describe('v2-api', () => {
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const validateSuccess: Validator<string> = () => 'success'
 
-      return expect(v2ApiFetcher('example-resource', validateSuccess)('access-token'))
+      return expect(createRequest('example-resource', validateSuccess)(fetcher))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] {"message":"error"}')
     })
 
@@ -34,7 +36,7 @@ describe('v2-api', () => {
         throw new ValidatorError('failed')
       }
 
-      return expect(v2ApiFetcher('example-resource', validateFailure)('access-token'))
+      return expect(createRequest('example-resource', validateFailure)(fetcher))
       .to.be.rejectedWith(BadApiResponseDataError, 'failed')
     })
 
@@ -47,7 +49,7 @@ describe('v2-api', () => {
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const messageValidator: Validator<{message: string}> = (input: any) => input
 
-      return expect(v2ApiFetcher('example-resource', messageValidator)('access-token'))
+      return expect(createRequest('example-resource', messageValidator)(fetcher))
       .to.eventually.eql({message: 'hello'})
     })
   })

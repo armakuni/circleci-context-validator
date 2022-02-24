@@ -2,15 +2,21 @@ import {Validator, ValidatorError} from '../validator'
 import fetch from 'node-fetch'
 import {ApiRequestError, BadApiResponseDataError} from './types'
 
-export type V2APIRequester<Response> = (personalAccessToken: string) => Promise<Response>
+export type APIRequest<Response> = (fetcher: APIFetcher) => Promise<Response>
 
-export function v2ApiFetcher<Response>(path: string, validate: Validator<Response>): V2APIRequester<Response> {
-  return async (personalAccessToken: string) => {
-    return validateResponse(validate, await request(path, personalAccessToken))
+type APIFetcher = (path: string) => Promise<any>
+
+export function createRequest<Response>(path: string, validate: Validator<Response>): APIRequest<Response> {
+  return async (fetcher: APIFetcher) => {
+    return validateResponse(validate, await fetcher(path))
   }
 }
 
-async function request(path: string, personalAccessToken: string) {
+export function createFetcher(personalAccessToken: string): APIFetcher {
+  return (path: string) => request(personalAccessToken, path)
+}
+
+async function request(personalAccessToken: string, path: string): Promise<any> {
   const response = await fetch(`https://circleci.com/api/v2/${path}`, {
     headers: {
       'Circle-Token': personalAccessToken,
