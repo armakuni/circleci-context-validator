@@ -2,10 +2,8 @@ import {Command, Flags} from '@oclif/core'
 import {loadYamlFile} from '../../lib/yaml-files'
 import {validate} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
-import {fetchContexts, GetContextsResponse} from '../../circleci'
-import ApiRequestError from '../../circleci/api-request-error'
-import BadApiResponseDataError from '../../circleci/bad-api-response-data-error'
 import {Config} from '../../config/config'
+import {ApiRequestError, BadApiResponseDataError, ContextItem, fetchContexts} from '../../circleci'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -43,7 +41,7 @@ export default class Validate extends Command {
     return validate(await loadYamlFile(configPath))
   }
 
-  private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<GetContextsResponse> {
+  private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<ContextItem[]> {
     try {
       return await fetchContexts(config.owner.id, environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
     } catch (error) {
