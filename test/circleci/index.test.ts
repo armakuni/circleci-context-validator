@@ -1,11 +1,7 @@
 import * as nock from 'nock'
-import * as chai from 'chai'
 import {expect} from 'chai'
-import * as chaiAsPromised from 'chai-as-promised'
 import {ApiRequestError, BadApiResponseDataError} from '../../src/circleci/types'
 import {fetchContexts} from '../../src/circleci'
-
-chai.use(chaiAsPromised)
 
 describe('circleci', () => {
   describe('fetchContexts', () => {
