@@ -23,14 +23,6 @@ describe('circleci', () => {
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] an error occurred')
     })
 
-    it('throws when 401 error returned', () => {
-      mockRequest
-      .reply(401, 'not authorized')
-
-      return expect(fetchContexts(ownerId, 'example-token'))
-      .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [401] not authorized')
-    })
-
     it('throws when response is invalid is missing', () => {
       mockRequest
       .reply(200, {})
