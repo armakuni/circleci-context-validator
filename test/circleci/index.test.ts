@@ -27,7 +27,7 @@ describe('circleci', () => {
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [401] not authorized')
     })
 
-    it('throws when items is missing', () => {
+    it('throws when response is invalid is missing', () => {
       nock('https://circleci.com')
       .get('/api/v2/context')
       .query({'owner-id': '***REMOVED***'})
@@ -36,40 +36,6 @@ describe('circleci', () => {
 
       return expect(fetchContexts('***REMOVED***', 'example-token'))
       .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'items'/)
-    })
-
-    it('throws when name is missing from a context', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': '***REMOVED***'})
-      .matchHeader('circle-token', 'example-token')
-      .reply(200,     {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
-        items: [{
-          id: '00a9f111-55f6-46b9-8b85-57845802075d',
-          created_at: '2020-10-14T09:02:53.453Z', // eslint-disable-line camelcase
-        }],
-      })
-
-      return expect(fetchContexts('***REMOVED***', 'example-token'))
-      .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'name'/)
-    })
-
-    it('throws when id is missing from a context', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': '***REMOVED***'})
-      .matchHeader('circle-token', 'example-token')
-      .reply(200,     {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
-        items: [{
-          name: 'context-one',
-          created_at: '2020-10-14T09:02:53.453Z', // eslint-disable-line camelcase
-        }],
-      })
-
-      return expect(fetchContexts('***REMOVED***', 'example-token'))
-      .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'id'/)
     })
 
     it('returns the list of contexts', () => {

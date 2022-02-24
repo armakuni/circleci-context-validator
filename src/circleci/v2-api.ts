@@ -4,7 +4,7 @@ import {ApiRequestError, BadApiResponseDataError} from './types'
 
 export type APIRequest<Response> = (fetcher: APIFetcher) => Promise<Response>
 
-type APIFetcher = (path: string) => Promise<any>
+export type APIFetcher = (path: string) => Promise<any>
 
 export function createRequest<Response>(path: string, validate: Validator<Response>): APIRequest<Response> {
   return async (fetcher: APIFetcher) => validateResponse(validate, await fetcher(path))
