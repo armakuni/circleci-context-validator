@@ -2,11 +2,7 @@ import * as nock from 'nock'
 import {createFetcher, createRequest} from '../../src/circleci/v2-api'
 import {Validator, ValidatorError} from '../../src/validator'
 import {expect} from 'chai'
-import * as chai from 'chai'
-import * as chaiAsPromised from 'chai-as-promised'
 import {ApiRequestError, BadApiResponseDataError} from '../../src/circleci'
-
-chai.use(chaiAsPromised)
 
 describe('v2-api', () => {
   describe('v2ApiFetcher', () => {
