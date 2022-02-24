@@ -1,48 +1,46 @@
 import * as nock from 'nock'
+import {Interceptor} from 'nock'
 import {expect} from 'chai'
-import {ApiRequestError, BadApiResponseDataError} from '../../src/circleci/types'
-import {fetchContexts} from '../../src/circleci'
+import {ApiRequestError, BadApiResponseDataError, fetchContexts} from '../../src/circleci'
 
 describe('circleci', () => {
   describe('fetchContexts', () => {
-    it('throws when 500 error returned when fetching the list of contexts', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': '***REMOVED***'})
-      .matchHeader('circle-token', 'example-token')
-      .reply(500, 'an error occurred')
+    const ownerId = '97223a6b-3090-47ce-94b0-485ce0a38e62'
 
-      return expect(fetchContexts('***REMOVED***', 'example-token'))
+    let mockRequest: Interceptor
+
+    beforeEach(() => {
+      mockRequest = nock('https://circleci.com')
+      .get('/api/v2/context')
+      .query({'owner-id': ownerId})
+      .matchHeader('circle-token', 'example-token')
+    })
+
+    it('throws when 500 error returned when fetching the list of contexts', () => {
+      mockRequest.reply(500, 'an error occurred')
+
+      return expect(fetchContexts(ownerId, 'example-token'))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] an error occurred')
     })
 
     it('throws when 401 error returned', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': '***REMOVED***'})
-      .matchHeader('circle-token', 'example-token')
+      mockRequest
       .reply(401, 'not authorized')
 
-      return expect(fetchContexts('***REMOVED***', 'example-token'))
+      return expect(fetchContexts(ownerId, 'example-token'))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [401] not authorized')
     })
 
     it('throws when response is invalid is missing', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': '***REMOVED***'})
-      .matchHeader('circle-token', 'example-token')
+      mockRequest
       .reply(200, {})
 
-      return expect(fetchContexts('***REMOVED***', 'example-token'))
+      return expect(fetchContexts(ownerId, 'example-token'))
       .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'items'/)
     })
 
     it('returns the list of contexts', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': '***REMOVED***'})
-      .matchHeader('circle-token', 'example-token')
+      mockRequest
       .reply(200,     {
         next_page_token: 'next-page-token', // eslint-disable-line camelcase
         items: [{
@@ -56,7 +54,7 @@ describe('circleci', () => {
         }],
       })
 
-      return expect(fetchContexts('***REMOVED***', 'example-token'))
+      return expect(fetchContexts(ownerId, 'example-token'))
       .to.eventually.eql([
         {
           name: 'context-one',
