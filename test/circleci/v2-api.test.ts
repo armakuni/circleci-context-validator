@@ -25,7 +25,7 @@ describe('v2-api', () => {
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] {"message":"error"}')
     })
 
-    it('throws when response is not 200', () => {
+    it('throws when validate fails', () => {
       nock('https://circleci.com')
       .get('/api/v2/example-resource')
       .matchHeader('circle-token', 'access-token')
@@ -38,6 +38,20 @@ describe('v2-api', () => {
 
       return expect(createRequest('example-resource', validateFailure)(fetcher))
       .to.be.rejectedWith(BadApiResponseDataError, 'failed')
+    })
+
+    it('re-throws when validate fails unexpectedly', () => {
+      nock('https://circleci.com')
+      .get('/api/v2/example-resource')
+      .matchHeader('circle-token', 'access-token')
+      .reply(200, {})
+
+      const validateFailure: Validator<string> = () => {
+        throw new Error('not a validate error')
+      }
+
+      return expect(createRequest('example-resource', validateFailure)(fetcher))
+      .to.be.rejectedWith(Error, 'not a validate error')
     })
 
     it('returns the validated response', () => {
