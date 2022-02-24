@@ -43,9 +43,9 @@ const getContextsResponseSchema: JSONSchemaType<GetContextsResponse> = {
   },
 }
 
-const getContextsPath = (ownerId: string) => `context?owner-id=${ownerId}`
+export const getContextsPath = (ownerId: string): string => `context?owner-id=${ownerId}`
 
-const getContextsResponseValidator: Validator<GetContextsResponse> = validateWithJsonSchema(getContextsResponseSchema)
+export const getContextsResponseValidator: Validator<GetContextsResponse> = validateWithJsonSchema(getContextsResponseSchema)
 
 export const getContexts = (ownerId: string): APIRequest<GetContextsResponse> => createRequest(
   getContextsPath(ownerId),

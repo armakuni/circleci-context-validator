@@ -1,0 +1,79 @@
+import {describe} from 'mocha'
+import {getContexts, getContextsPath, getContextsResponseValidator} from '../../src/circleci/get-contexts'
+import {expect} from 'chai'
+import {ValidatorError} from '../../src/validator'
+import {APIFetcher} from '../../src/circleci/v2-api'
+import {BadApiResponseDataError} from '../../src/circleci'
+
+describe('get-contexts', () => {
+  describe('getContextsPath', () => {
+    it('returns the path with the owner id', () => {
+      expect(getContextsPath('abc-123')).to.eql('context?owner-id=abc-123')
+    })
+  })
+
+  describe('getContextsResponseValidator', () => {
+    let response: any
+
+    beforeEach(() => {
+      response = {
+        next_page_token: 'next-page-token', // eslint-disable-line camelcase
+        items: [{
+          name: 'context-one',
+          id: '00a9f111-55f6-46b9-8b85-57845802075d',
+          created_at: '2020-10-14T09:02:53.453Z', // eslint-disable-line camelcase
+        }, {
+          name: 'context-two',
+          id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5',
+          created_at: '2021-09-02T14:42:20.126Z', // eslint-disable-line camelcase
+        }],
+      }
+    })
+
+    it('throws when items is missing', () => {
+      delete response.items
+      expect(() => getContextsResponseValidator(response))
+      .to.throw(ValidatorError, /must have required property 'items'/)
+    })
+
+    it('throws when name is missing from a context', () => {
+      delete response.items[0].name
+      expect(() => getContextsResponseValidator(response))
+      .to.throw(ValidatorError, /must have required property 'name'/)
+    })
+
+    it('throws when id is missing from a context', () => {
+      delete response.items[0].id
+      expect(() => getContextsResponseValidator(response))
+      .to.throw(ValidatorError, /must have required property 'id'/)
+    })
+
+    it('returns the response', () => {
+      expect(getContextsResponseValidator(response)).to.eq(response)
+    })
+  })
+
+  describe('getContexts', () => {
+    const response = {
+      next_page_token: 'next-page-token', // eslint-disable-line camelcase
+      items: [{
+        name: 'context-one',
+        id: '00a9f111-55f6-46b9-8b85-57845802075d',
+        created_at: '2020-10-14T09:02:53.453Z', // eslint-disable-line camelcase
+      }],
+    }
+
+    const fetcher: APIFetcher = (path: string) => {
+      const expectedPath = getContextsPath('example-owner-id')
+      if (path !== expectedPath) {
+        throw new BadApiResponseDataError(`${path} != ${expectedPath}`)
+      }
+
+      return Promise.resolve(response)
+    }
+
+    it('build a fetcher which returns the valid response', () => {
+      return expect(getContexts('example-owner-id')(fetcher)).to.eventually.eql(response)
+    })
+  })
+})
