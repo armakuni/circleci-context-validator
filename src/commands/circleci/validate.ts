@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import {loadYamlFile} from '../../lib/yaml-files'
-import {validate} from '../../config/validator'
+import {validateConfig} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
 import {ApiRequestError, BadApiResponseDataError, ContextItem, fetchContexts} from '../../circleci'
@@ -38,7 +38,7 @@ export default class Validate extends Command {
   }
 
   private static async loadConfig(configPath: string) {
-    return validate(await loadYamlFile(configPath))
+    return validateConfig(await loadYamlFile(configPath))
   }
 
   private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<ContextItem[]> {
