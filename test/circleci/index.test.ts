@@ -3,12 +3,14 @@ import {Interceptor} from 'nock'
 import {expect} from 'chai'
 import {
   ApiRequestError,
-  BadApiResponseDataError,
+  BadApiResponseDataError, createFetcher,
   fetchContextEnvironmentVariables,
   fetchContexts,
 } from '../../src/circleci'
 
 describe('circleci', () => {
+  const fetcher = createFetcher('example-token')
+
   describe('fetchContexts', () => {
     const ownerId = '97223a6b-3090-47ce-94b0-485ce0a38e62'
 
@@ -24,7 +26,7 @@ describe('circleci', () => {
     it('throws when 500 error returned when fetching the list of contexts', () => {
       mockRequest.reply(500, 'an error occurred')
 
-      return expect(fetchContexts(ownerId, 'example-token'))
+      return expect(fetchContexts(ownerId, fetcher))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] an error occurred')
     })
 
@@ -32,7 +34,7 @@ describe('circleci', () => {
       mockRequest
       .reply(200, {})
 
-      return expect(fetchContexts(ownerId, 'example-token'))
+      return expect(fetchContexts(ownerId, fetcher))
       .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'items'/)
     })
 
@@ -51,7 +53,7 @@ describe('circleci', () => {
         }],
       })
 
-      return expect(fetchContexts(ownerId, 'example-token'))
+      return expect(fetchContexts(ownerId, fetcher))
       .to.eventually.eql([
         {
           name: 'context-one',
@@ -81,7 +83,7 @@ describe('circleci', () => {
     it('throws when 500 error returned when fetching the list of contexts', () => {
       mockRequest.reply(500, 'an error occurred')
 
-      return expect(fetchContextEnvironmentVariables(contextId, 'example-token'))
+      return expect(fetchContextEnvironmentVariables(contextId, fetcher))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] an error occurred')
     })
 
@@ -89,7 +91,7 @@ describe('circleci', () => {
       mockRequest
       .reply(200, {})
 
-      return expect(fetchContextEnvironmentVariables(contextId, 'example-token'))
+      return expect(fetchContextEnvironmentVariables(contextId, fetcher))
       .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'items'/)
     })
 
@@ -108,7 +110,7 @@ describe('circleci', () => {
         }],
       })
 
-      return expect(fetchContextEnvironmentVariables(contextId, 'example-token'))
+      return expect(fetchContextEnvironmentVariables(contextId, fetcher))
       .to.eventually.eql([
         {
           variable: 'SECRET_ONE',
