@@ -11,30 +11,23 @@ export interface ContextItem {
   id: string
 }
 
-const getContextsResponseSchema: JSONSchemaType<GetContextsResponse> = {
-  definitions: {},
-  $schema: 'http://json-schema.org/draft-07/schema#',
-  title: 'Root',
+const schema: JSONSchemaType<GetContextsResponse> = {
   type: 'object',
   required: ['items'],
   additionalProperties: true,
   properties: {
     items: {
-      title: 'Contexts',
       type: 'array',
       default: [],
       items: {
-        title: 'Items',
         type: 'object',
         required: ['id', 'name'],
         additionalProperties: true,
         properties: {
           name: {
-            title: 'Name',
             type: 'string',
           },
           id: {
-            title: 'ID',
             type: 'string',
           },
         },
@@ -43,11 +36,14 @@ const getContextsResponseSchema: JSONSchemaType<GetContextsResponse> = {
   },
 }
 
-export const getContextsPath = (ownerId: string): string => `context?owner-id=${ownerId}`
+export const getContextsPath =
+  (ownerId: string): string => `context?owner-id=${ownerId}`
 
-export const getContextsResponseValidator: Validator<GetContextsResponse> = validateWithJsonSchema(getContextsResponseSchema)
+export const getContextsResponseValidator: Validator<GetContextsResponse> =
+  validateWithJsonSchema(schema)
 
-export const getContexts = (ownerId: string): APIRequest<GetContextsResponse> => createRequest(
-  getContextsPath(ownerId),
-  getContextsResponseValidator,
-)
+export const getContexts =
+  (ownerId: string): APIRequest<GetContextsResponse> => createRequest(
+    getContextsPath(ownerId),
+    getContextsResponseValidator,
+  )
