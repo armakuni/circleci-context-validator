@@ -26,7 +26,7 @@ describe('circleci', () => {
     it('throws when 500 error returned when fetching the list of contexts', () => {
       mockRequest.reply(500, 'an error occurred')
 
-      return expect(fetchContexts(ownerId, fetcher))
+      return expect(fetchContexts(ownerId)(fetcher))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] an error occurred')
     })
 
@@ -34,7 +34,7 @@ describe('circleci', () => {
       mockRequest
       .reply(200, {})
 
-      return expect(fetchContexts(ownerId, fetcher))
+      return expect(fetchContexts(ownerId)(fetcher))
       .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'items'/)
     })
 
@@ -53,7 +53,7 @@ describe('circleci', () => {
         }],
       })
 
-      return expect(fetchContexts(ownerId, fetcher))
+      return expect(fetchContexts(ownerId)(fetcher))
       .to.eventually.eql([
         {
           name: 'context-one',
@@ -83,7 +83,7 @@ describe('circleci', () => {
     it('throws when 500 error returned when fetching the list of contexts', () => {
       mockRequest.reply(500, 'an error occurred')
 
-      return expect(fetchContextEnvironmentVariables(contextId, fetcher))
+      return expect(fetchContextEnvironmentVariables(contextId)(fetcher))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] an error occurred')
     })
 
@@ -91,7 +91,7 @@ describe('circleci', () => {
       mockRequest
       .reply(200, {})
 
-      return expect(fetchContextEnvironmentVariables(contextId, fetcher))
+      return expect(fetchContextEnvironmentVariables(contextId)(fetcher))
       .to.be.rejectedWith(BadApiResponseDataError, /must have required property 'items'/)
     })
 
@@ -110,7 +110,7 @@ describe('circleci', () => {
         }],
       })
 
-      return expect(fetchContextEnvironmentVariables(contextId, fetcher))
+      return expect(fetchContextEnvironmentVariables(contextId)(fetcher))
       .to.eventually.eql([
         {
           variable: 'SECRET_ONE',

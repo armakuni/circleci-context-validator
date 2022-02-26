@@ -45,7 +45,7 @@ export default class Validate extends Command {
     const fetcher = createFetcher(environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
 
     try {
-      return await fetchContexts(config.owner.id, fetcher)
+      return await fetchContexts(config.owner.id)(fetcher)
     } catch (error) {
       if (error instanceof ApiRequestError || error instanceof BadApiResponseDataError) {
         this.error('CircleCI API request failed: \n' + (error as Error).toString(), {

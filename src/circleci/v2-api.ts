@@ -14,6 +14,10 @@ export function createFetcher(personalAccessToken: string): APIFetcher {
   return (path: string) => request(personalAccessToken, path)
 }
 
+export function mapRequest<A, B>(f: (x: A) => B, request: APIRequest<A>): APIRequest<B> {
+  return (fetcher: APIFetcher): Promise<B> => request(fetcher).then((x: A) => f(x))
+}
+
 async function request(personalAccessToken: string, path: string): Promise<any> {
   const response = await fetch(`https://circleci.com/api/v2/${path}`, {
     headers: {

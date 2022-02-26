@@ -38,8 +38,8 @@ export const getContextEnvironmentVariablesValidator: Validator<GetContextEnviro
   validateWithJsonSchema(schema)
 
 export const getContextEnvironmentVariables =
-  (ownerId: string): APIRequest<GetContextEnvironmentVariablesResponse> =>
+  (contextId: string): APIRequest<GetContextEnvironmentVariablesResponse> =>
     createRequest(
-      getContextEnvironmentVariablesPath(ownerId),
+      getContextEnvironmentVariablesPath(contextId),
       getContextEnvironmentVariablesValidator,
     )
