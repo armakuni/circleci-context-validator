@@ -1,18 +1,18 @@
 import {describe} from 'mocha'
-import {getContexts, getContextsPath, getContextsResponseValidator} from '../../src/circleci/get-contexts'
+import {createRequest, getPath, validate} from '../../src/circleci/get-contexts'
 import {expect} from 'chai'
 import {ValidatorError} from '../../src/validator'
 import {APIFetcher} from '../../src/circleci/v2-api'
 import {BadApiResponseDataError} from '../../src/circleci'
 
 describe('get-contexts', () => {
-  describe('getContextsPath', () => {
+  describe('getPath', () => {
     it('returns the path with the owner id', () => {
-      expect(getContextsPath('abc-123')).to.eql('context?owner-id=abc-123')
+      expect(getPath('abc-123')).to.eql('context?owner-id=abc-123')
     })
   })
 
-  describe('getContextsResponseValidator', () => {
+  describe('validate', () => {
     let response: any
 
     beforeEach(() => {
@@ -32,28 +32,28 @@ describe('get-contexts', () => {
 
     it('throws when items is missing', () => {
       delete response.items
-      expect(() => getContextsResponseValidator(response))
+      expect(() => validate(response))
       .to.throw(ValidatorError, /must have required property 'items'/)
     })
 
     it('throws when name is missing from a context', () => {
       delete response.items[0].name
-      expect(() => getContextsResponseValidator(response))
+      expect(() => validate(response))
       .to.throw(ValidatorError, /must have required property 'name'/)
     })
 
     it('throws when id is missing from a context', () => {
       delete response.items[0].id
-      expect(() => getContextsResponseValidator(response))
+      expect(() => validate(response))
       .to.throw(ValidatorError, /must have required property 'id'/)
     })
 
     it('returns the response', () => {
-      expect(getContextsResponseValidator(response)).to.eq(response)
+      expect(validate(response)).to.eq(response)
     })
   })
 
-  describe('getContexts', () => {
+  describe('createRequests', () => {
     const response = {
       next_page_token: 'next-page-token', // eslint-disable-line camelcase
       items: [{
@@ -64,7 +64,7 @@ describe('get-contexts', () => {
     }
 
     const fetcher: APIFetcher = (path: string) => {
-      const expectedPath = getContextsPath('example-owner-id')
+      const expectedPath = getPath('example-owner-id')
       if (path !== expectedPath) {
         throw new BadApiResponseDataError(`${path} != ${expectedPath}`)
       }
@@ -73,7 +73,7 @@ describe('get-contexts', () => {
     }
 
     it('build a fetcher which returns the valid response', () => {
-      return expect(getContexts('example-owner-id')(fetcher)).to.eventually.eql(response)
+      return expect(createRequest('example-owner-id')(fetcher)).to.eventually.eql(response)
     })
   })
 })
