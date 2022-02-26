@@ -3,7 +3,7 @@ import {loadYamlFile} from '../../lib/yaml-files'
 import {validateConfig} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
-import {ApiRequestError, BadApiResponseDataError, ContextItem, createFetcher, fetchContexts} from '../../circleci'
+import {ApiRequestError, BadApiResponseDataError, ContextItem, createFetcher, getContexts} from '../../circleci'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -45,7 +45,7 @@ export default class Validate extends Command {
     const fetcher = createFetcher(environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
 
     try {
-      return await fetchContexts(config.owner.id)(fetcher)
+      return await getContexts(config.owner.id)(fetcher)
     } catch (error) {
       if (error instanceof ApiRequestError || error instanceof BadApiResponseDataError) {
         this.error('CircleCI API request failed: \n' + (error as Error).toString(), {

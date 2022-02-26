@@ -1,6 +1,7 @@
 import {validateWithJsonSchema, Validator} from '../validator'
 import {JSONSchemaType} from 'ajv'
-import {createRequest, APIRequest} from './v2-api'
+import * as API from './v2-api'
+import {APIRequest} from './v2-api'
 
 export interface GetContextsResponse {
   items: ContextItem[]
@@ -36,14 +37,14 @@ const schema: JSONSchemaType<GetContextsResponse> = {
   },
 }
 
-export const getContextsPath =
+export const getPath =
   (ownerId: string): string => `context?owner-id=${ownerId}`
 
-export const getContextsResponseValidator: Validator<GetContextsResponse> =
+export const validate: Validator<GetContextsResponse> =
   validateWithJsonSchema(schema)
 
-export const getContexts =
-  (ownerId: string): APIRequest<GetContextsResponse> => createRequest(
-    getContextsPath(ownerId),
-    getContextsResponseValidator,
+export const createRequest =
+  (ownerId: string): APIRequest<GetContextsResponse> => API.createRequest(
+    getPath(ownerId),
+    validate,
   )

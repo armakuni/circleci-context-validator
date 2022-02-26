@@ -1,4 +1,5 @@
-import {APIRequest, createRequest} from './v2-api'
+import * as API from './v2-api'
+import {APIRequest} from './v2-api'
 import {validateWithJsonSchema, Validator} from '../validator'
 import {JSONSchemaType} from 'ajv'
 
@@ -31,15 +32,15 @@ const schema: JSONSchemaType<GetContextEnvironmentVariablesResponse> = {
   },
 }
 
-export const getContextEnvironmentVariablesPath =
+export const getPath =
   (contextId: string): string => `context/${contextId}/environment-variable`
 
-export const getContextEnvironmentVariablesValidator: Validator<GetContextEnvironmentVariablesResponse> =
+export const validate: Validator<GetContextEnvironmentVariablesResponse> =
   validateWithJsonSchema(schema)
 
-export const getContextEnvironmentVariables =
+export const createRequest =
   (contextId: string): APIRequest<GetContextEnvironmentVariablesResponse> =>
-    createRequest(
-      getContextEnvironmentVariablesPath(contextId),
-      getContextEnvironmentVariablesValidator,
+    API.createRequest(
+      getPath(contextId),
+      validate,
     )
