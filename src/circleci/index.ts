@@ -1,15 +1,13 @@
 import {ContextItem, getContexts} from './get-contexts'
-import {APIFetcher} from './v2-api'
+import {APIRequest, mapRequest} from './v2-api'
 import {EnvironmentVariable, getContextEnvironmentVariables} from './get-context-environment-variables'
 
 export * from './types'
 export * from './v2-api'
 export {GetContextsResponse, ContextItem} from './get-contexts'
 
-export async function fetchContexts(ownerId: string, fetcher: APIFetcher): Promise<ContextItem[]> {
-  return (await getContexts(ownerId)(fetcher)).items
-}
+export const fetchContexts = (ownerId: string): APIRequest<ContextItem[]> =>
+  mapRequest(response => response.items, getContexts(ownerId))
 
-export async function fetchContextEnvironmentVariables(contextId: string, fetcher: APIFetcher): Promise<EnvironmentVariable[]> {
-  return (await getContextEnvironmentVariables(contextId)(fetcher)).items
-}
+export const fetchContextEnvironmentVariables = (contextId: string): APIRequest<EnvironmentVariable[]> =>
+  mapRequest(response => response.items, getContextEnvironmentVariables(contextId))

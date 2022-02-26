@@ -1,11 +1,11 @@
 import * as nock from 'nock'
-import {createFetcher, createRequest} from '../../src/circleci/v2-api'
+import {createFetcher, createRequest, mapRequest} from '../../src/circleci/v2-api'
 import {Validator, ValidatorError} from '../../src/validator'
 import {expect} from 'chai'
 import {ApiRequestError, BadApiResponseDataError} from '../../src/circleci'
 
 describe('v2-api', () => {
-  describe('v2ApiFetcher', () => {
+  describe('createRequest', () => {
     const fetcher = createFetcher('access-token')
 
     it('throws when response is not 200', () => {
@@ -61,6 +61,18 @@ describe('v2-api', () => {
 
       return expect(createRequest('example-resource', messageValidator)(fetcher))
       .to.eventually.eql({message: 'hello'})
+    })
+  })
+
+  describe('mapRequest', () => {
+    it('maps the result', () => {
+      // eslint-disable-next-line unicorn/consistent-function-scoping
+      const fetcher = () => Promise.resolve('result')
+      // eslint-disable-next-line unicorn/consistent-function-scoping
+      const validator = (x: string) => `validated ${x}`
+      const request = createRequest('abc', validator)
+      const response = mapRequest(x => `mapped ${x}`, request)(fetcher)
+      return expect(response).to.eventually.eql('mapped validated result')
     })
   })
 })
