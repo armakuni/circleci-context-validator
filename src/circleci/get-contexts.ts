@@ -2,40 +2,29 @@ import {validateWithJsonSchema, Validator} from '../validator'
 import {JSONSchemaType} from 'ajv'
 import * as API from './v2-api'
 import {APIRequest} from './v2-api'
+import {PaginatedResponse, paginatedSchema} from './pagination'
 
-export interface GetContextsResponse {
-  items: ContextItem[]
-}
+export type GetContextsResponse = PaginatedResponse<ContextItem>
 
 export interface ContextItem {
   name: string
   id: string
 }
 
-const schema: JSONSchemaType<GetContextsResponse> = {
-  type: 'object',
-  required: ['items'],
-  additionalProperties: true,
-  properties: {
-    items: {
-      type: 'array',
-      default: [],
-      items: {
-        type: 'object',
-        required: ['id', 'name'],
-        additionalProperties: true,
-        properties: {
-          name: {
-            type: 'string',
-          },
-          id: {
-            type: 'string',
-          },
-        },
+const schema: JSONSchemaType<GetContextsResponse> =
+  paginatedSchema({
+    type: 'object',
+    required: ['id', 'name'],
+    additionalProperties: true,
+    properties: {
+      name: {
+        type: 'string',
+      },
+      id: {
+        type: 'string',
       },
     },
-  },
-}
+  })
 
 export const getPath =
   (ownerId: string): string => `context?owner-id=${ownerId}`
