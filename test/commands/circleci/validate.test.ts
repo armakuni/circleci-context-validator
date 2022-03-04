@@ -49,7 +49,7 @@ describe('circleci validate', () => {
   .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
   .it('runs the circleci validate successfully', ctx => {
     expect(ctx.stdout).to.contain('context-one')
-    expect(ctx.stdout).to.contain('context-two')
+    expect(ctx.stdout).to.not.contain('context-two')
     expect(ctx.stdout).to.contain('Success')
   })
 
@@ -73,6 +73,17 @@ describe('circleci validate', () => {
             },
           },
         },
+        {
+          name: 'context-two',
+          purpose: 'Used for ec2 staging environment',
+          'environment-variables': {
+            AWS_SECRET_KEY_VALUE: {
+              state: 'required',
+              purpose: 'Required for AWS API usage on CLI Tool',
+              labels: ['tooling', 'aws'],
+            },
+          },
+        },
       ],
     }),
   )
@@ -83,7 +94,11 @@ describe('circleci validate', () => {
   .reply(200,
     {
       next_page_token: 'next-page-token', // eslint-disable-line camelcase
-      items: [],
+      items: [{
+        name: 'context-two',
+        id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5',
+        created_at: '2021-09-02T14:42:20.126Z', // eslint-disable-line camelcase
+      }],
     },
   ),
   )
@@ -91,6 +106,7 @@ describe('circleci validate', () => {
   .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
   .it('errors when the validation checks fail', ctx => {
     expect(ctx.stdout).to.contain('Context "context-one" is missing')
+    expect(ctx.stdout).to.not.contain('Context "context-two" is missing')
   })
 
   test

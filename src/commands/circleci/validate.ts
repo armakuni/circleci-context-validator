@@ -3,8 +3,9 @@ import {loadYamlFile} from '../../lib/yaml-files'
 import {validateConfig} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
-import {ApiRequestError, BadApiResponseDataError, ContextItem} from '../../circleci'
+import {ApiRequestError, BadApiResponseDataError} from '../../circleci'
 import {validateContexts} from '../../context-validator'
+import {ContextMissingResult, ContextValidatorResult} from '../../context-validator/types'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -32,13 +33,15 @@ export default class Validate extends Command {
     const environment = this.loadEnvironment()
     const config = await Validate.loadConfig(flags['context-definitions'])
 
-    const {missingContexts, fetchedContexts} = await this.fetchCircleCIContexts(config, environment)
+    const results = await this.fetchCircleCIContexts(config, environment)
 
-    for (const context of missingContexts) {
-      this.log(`Context "${context}" is missing`)
+    for (const result of results) {
+      if (result instanceof ContextMissingResult) {
+        this.log(`Context "${result.contextName}" is missing`)
+      }
     }
 
-    this.log(JSON.stringify(fetchedContexts))
+    this.log(JSON.stringify(results))
 
     this.log('Success')
   }
@@ -47,7 +50,7 @@ export default class Validate extends Command {
     return validateConfig(await loadYamlFile(configPath))
   }
 
-  private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<{missingContexts: string[], fetchedContexts: ContextItem[]}> {
+  private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<ContextValidatorResult[]> {
     try {
       return await validateContexts(config, environment)
     } catch (error) {
