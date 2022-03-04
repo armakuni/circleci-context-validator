@@ -1,13 +1,9 @@
 owner:
   id: ***REMOVED***
 
-# To think about
-# mono vs singular project usage
-# yaml schema validator
-
 # List of contexts we are interested in validating
 contexts:
-  - name: legacy-production # Valid name of the context listed in CircleCI
+  - name: legacy-frontend # Valid name of the context listed in CircleCI
     purpose: Used for ec2 production environment # What is the purpose of this context
     environment-variables:
       AWS_SECRET_KEY_VALUE: # The key name only, do not provide the value
@@ -16,4 +12,18 @@ contexts:
         labels:  # list of potential ways to group these together
           - tooling
           - aws
-
+  - name: legacy-content # Valid name of the context listed in CircleCI
+    purpose: AWS backend for content distribution API # What is the purpose of this context
+    environment-variables:
+      AWS_SECRET_KEY_VALUE: # The key name only, do not provide the value
+        state: required # required or optional
+        purpose: Required for AWS API usage on CLI Tool # reason for it's purpose
+        labels:  # list of potential ways to group these together
+          - tooling
+          - aws
+      CONTENT_TOOL_API_KEY: 
+        state: required 
+        purpose: Enable access to downstream content tool API
+        labels:  # list of potential ways to group these together
+          - api
+          - token
