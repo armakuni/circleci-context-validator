@@ -27,6 +27,14 @@ USAGE
 ...
 ```
 <!-- usagestop -->
+
+# Local Dev Usage
+<!-- usage -->
+```sh-session
+CIRCLECI_PERSONAL_ACCESS_TOKEN=generate_personal_access_token bin/dev circleci validate --context-definitions example/context_validator.yml
+...
+```
+<!-- usagestop -->
 # Commands
 <!-- commands -->
 * [`ccv help [COMMAND]`](#ccv-help-command)
