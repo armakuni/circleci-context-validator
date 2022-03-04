@@ -13,7 +13,7 @@ describe('circleci validate', () => {
 
       contexts: [
         {
-          name: 'legacy-production',
+          name: 'context-one',
           purpose: 'Used for ec2 production environment',
           'environment-variables': {
             AWS_SECRET_KEY_VALUE: {
@@ -51,6 +51,46 @@ describe('circleci validate', () => {
     expect(ctx.stdout).to.contain('context-one')
     expect(ctx.stdout).to.contain('context-two')
     expect(ctx.stdout).to.contain('Success')
+  })
+
+  test
+  .do(setEnvVar('CIRCLECI_PERSONAL_ACCESS_TOKEN', 'pat123'))
+  .do(
+    createTempYamlFile('valid_config.yml', {
+      owner: {
+        id: '***REMOVED***',
+      },
+
+      contexts: [
+        {
+          name: 'context-one',
+          purpose: 'Used for ec2 production environment',
+          'environment-variables': {
+            AWS_SECRET_KEY_VALUE: {
+              state: 'required',
+              purpose: 'Required for AWS API usage on CLI Tool',
+              labels: ['tooling', 'aws'],
+            },
+          },
+        },
+      ],
+    }),
+  )
+  .nock('https://circleci.com', api => api
+  .get('/api/v2/context')
+  .query({'owner-id': '***REMOVED***'})
+  .matchHeader('circle-token', 'pat123')
+  .reply(200,
+    {
+      next_page_token: 'next-page-token', // eslint-disable-line camelcase
+      items: [],
+    },
+  ),
+  )
+  .stdout()
+  .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
+  .it('errors when the validation checks fail', ctx => {
+    expect(ctx.stdout).to.contain('Context "context-one" is missing')
   })
 
   test

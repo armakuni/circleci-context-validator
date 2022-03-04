@@ -30,7 +30,16 @@ export default class Validate extends Command {
 
     const environment = this.loadEnvironment()
     const config = await Validate.loadConfig(flags['context-definitions'])
+
     const fetchedContexts = await this.fetchCircleCIContexts(config, environment)
+
+    const expectedContextNames = config.contexts.map(context => context.name)
+    const actualContextNames = new Set(fetchedContexts.map(context => context.name))
+    const missingContexts = expectedContextNames.filter(name => !actualContextNames.has(name))
+
+    for (const context of missingContexts) {
+      this.log(`Context "${context}" is missing`)
+    }
 
     this.log(JSON.stringify(fetchedContexts))
 
