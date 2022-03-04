@@ -6,6 +6,7 @@ import {Config} from '../../config/config'
 import {ApiRequestError, BadApiResponseDataError} from '../../circleci'
 import {validateContexts} from '../../context-validator'
 import {ContextMissingResult, ContextValidatorResult} from '../../context-validator/types'
+import * as chalk from 'chalk' // eslint-disable-line unicorn/import-style
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -21,10 +22,6 @@ export default class Validate extends Command {
       required: true,
       description: 'A YAML file which describes which contexts to check',
     }),
-  //   'circleci-config': Flags.string({
-  //     required: false,
-  //     description: 'The config file for CircleCI',
-  //   }),
   };
 
   public async run(): Promise<void> {
@@ -37,13 +34,13 @@ export default class Validate extends Command {
 
     for (const result of results) {
       if (result instanceof ContextMissingResult) {
-        this.log(`Context "${result.contextName}" is missing`)
+        this.log(chalk.red(`Context "${result.contextName}" is missing`))
       }
     }
 
     this.log(JSON.stringify(results))
 
-    this.log('Success')
+    this.log(chalk.green('Success'))
   }
 
   private static async loadConfig(configPath: string) {
