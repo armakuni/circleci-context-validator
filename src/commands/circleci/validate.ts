@@ -3,7 +3,8 @@ import {loadYamlFile} from '../../lib/yaml-files'
 import {validateConfig} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
-import {ApiRequestError, BadApiResponseDataError, ContextItem, createFetcher, getContexts} from '../../circleci'
+import {ApiRequestError, BadApiResponseDataError, ContextItem} from '../../circleci'
+import {validateContexts} from '../../context-validator'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -31,11 +32,7 @@ export default class Validate extends Command {
     const environment = this.loadEnvironment()
     const config = await Validate.loadConfig(flags['context-definitions'])
 
-    const fetchedContexts = await this.fetchCircleCIContexts(config, environment)
-
-    const expectedContextNames = config.contexts.map(context => context.name)
-    const actualContextNames = new Set(fetchedContexts.map(context => context.name))
-    const missingContexts = expectedContextNames.filter(name => !actualContextNames.has(name))
+    const {missingContexts, fetchedContexts} = await this.fetchCircleCIContexts(config, environment)
 
     for (const context of missingContexts) {
       this.log(`Context "${context}" is missing`)
@@ -50,11 +47,9 @@ export default class Validate extends Command {
     return validateConfig(await loadYamlFile(configPath))
   }
 
-  private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<ContextItem[]> {
-    const fetcher = createFetcher(environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
-
+  private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<{missingContexts: string[], fetchedContexts: ContextItem[]}> {
     try {
-      return await getContexts(config.owner.id)(fetcher)
+      return await validateContexts(config, environment)
     } catch (error) {
       if (error instanceof ApiRequestError || error instanceof BadApiResponseDataError) {
         this.error('CircleCI API request failed: \n' + (error as Error).toString(), {
