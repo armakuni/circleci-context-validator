@@ -3,34 +3,32 @@ import {validateContexts} from '../../src/context-validator'
 import {Config} from '../../src/config/config'
 import {Environment} from '../../src/lib/environment'
 import * as nock from 'nock'
-import { ContextMissingResult, ContextValidatedResult } from '../../src/context-validator/types'
+import {ContextMissingResult, ContextValidatedResult} from '../../src/context-validator/types'
 
 describe('context-validator', () => {
   describe('validate', () => {
-    let config: Config = {
-        owner: {
-          id: '71362723'
-        },
-        contexts: [
-            {
-                name: 'context-one',
-                purpose: 'Used for ec2 production environment',
-                'environment-variables': {
-                AWS_SECRET_KEY_VALUE: {
-                    state: 'required',
-                    purpose: 'Required for AWS API usage on CLI Tool',
-                    labels: ['tooling', 'aws'],
-                },
-                },
+    const config: Config = {
+      owner: {
+        id: '71362723',
+      },
+      contexts: [
+        {
+          name: 'context-one',
+          purpose: 'Used for ec2 production environment',
+          'environment-variables': {
+            AWS_SECRET_KEY_VALUE: {
+              state: 'required',
+              purpose: 'Required for AWS API usage on CLI Tool',
+              labels: ['tooling', 'aws'],
             },
-        ]
+          },
+        },
+      ],
     }
 
-    let environment: Environment = {
-        CIRCLECI_PERSONAL_ACCESS_TOKEN: 'some-token'
+    const environment: Environment = {
+      CIRCLECI_PERSONAL_ACCESS_TOKEN: 'some-token',
     }
-
-    beforeEach(() => {})
 
     it('perform a successful validation', () => {
       nock('https://circleci.com')
@@ -47,12 +45,11 @@ describe('context-validator', () => {
           name: 'context-two',
           id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5',
           created_at: '2021-09-02T14:42:20.126Z', // eslint-disable-line camelcase
-        }]
+        }],
       })
 
       return expect(validateContexts(config, environment)).to.eventually.eql([new ContextValidatedResult('context-one')])
     })
-
 
     it('perform a unsuccessful validation due to missing context in circle', () => {
       nock('https://circleci.com')
@@ -61,14 +58,11 @@ describe('context-validator', () => {
       .matchHeader('circle-token', environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
       .reply(200, {
         next_page_token: 'next-page-token', // eslint-disable-line camelcase
-        items: []
+        items: [],
       })
 
       return expect(validateContexts(config, environment)).to.eventually.eql([new ContextMissingResult('context-one')])
     })
-
-
-})
-
+  })
 })
 
