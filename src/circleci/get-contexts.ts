@@ -1,4 +1,4 @@
-import {validateWithJsonSchema, Validator} from '../validator'
+import {validateWithJsonSchema, Validator} from '../schema-validator'
 import {JSONSchemaType} from 'ajv'
 import * as API from './v2-api'
 import {APIRequest} from './v2-api'

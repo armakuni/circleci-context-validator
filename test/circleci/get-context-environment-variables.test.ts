@@ -5,7 +5,7 @@ import {
   getPath,
   validate,
 } from '../../src/circleci/get-context-environment-variables'
-import {ValidatorError} from '../../src/validator'
+import {ValidatorError} from '../../src/schema-validator'
 import {APIFetcher} from '../../src/circleci/v2-api'
 import {BadApiResponseDataError} from '../../src/circleci'
 

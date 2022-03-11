@@ -1,4 +1,4 @@
-import {Validator, ValidatorError} from '../validator'
+import {Validator, ValidatorError} from '../schema-validator'
 import fetch from 'node-fetch'
 import {ApiRequestError, BadApiResponseDataError} from './types'
 

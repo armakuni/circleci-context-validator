@@ -1,4 +1,4 @@
-import {validateWithJsonSchema, ValidatorError} from '../../src/validator'
+import {validateWithJsonSchema, ValidatorError} from '../../src/schema-validator'
 import {JSONSchemaType} from 'ajv'
 import {expect} from 'chai'
 
