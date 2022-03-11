@@ -1,7 +1,7 @@
 export type ContextValidatorResult = ContextMissingResult | ContextValidatedResult
 
 export class ContextValidatedResult {
-  //Used for comparison purposes only
+  // Used for comparison purposes only
   private readonly tag = 'ContextValidatedResult'
   // eslint no-useless-constructor: "off"
   constructor(public readonly contextName: string) {}
