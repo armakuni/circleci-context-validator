@@ -24,13 +24,21 @@ export default class Validate extends Command {
     }),
   };
 
+  /*
+   * Orchestrate the validation process
+   * - Load env vars required for circle api
+   * - Load context definition yaml config containing context/env vars to validate
+   * - Collect contexts provided in config yaml from circle api
+   * - Determine valid and missing contexts
+   * - Process valid context retrieve env vars associated
+   */
   public async run(): Promise<void> {
     const {flags} = await this.parse(Validate)
 
     const environment = this.loadEnvironment()
     const config = await Validate.loadConfig(flags['context-definitions'])
 
-    const results = await this.fetchCircleCIContexts(config, environment)
+    const results = await this.validateCircleCIContexts(config, environment)
 
     for (const result of results) {
       if (result instanceof ContextMissingResult) {
@@ -47,7 +55,7 @@ export default class Validate extends Command {
     return validateConfig(await loadYamlFile(configPath))
   }
 
-  private async fetchCircleCIContexts(config: Config, environment: Environment): Promise<ContextValidatorResult[]> {
+  private async validateCircleCIContexts(config: Config, environment: Environment): Promise<ContextValidatorResult[]> {
     try {
       return await validateContexts(config, environment)
     } catch (error) {
