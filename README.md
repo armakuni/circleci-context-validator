@@ -1,7 +1,7 @@
 CircleCI Context Validator CLI Tool
 =================
 
-[![CircleCI](https://circleci.com/gh/armakuni/circleci-context-validator/tree/main.svg?style=shield)](https://circleci.com/gh/armakuni/circleci-context-validator/tree/main)
+[![CircleCI](https://circleci.com/gh/armakuni/circleci-context-validator/tree/main.svg?style=svg&circle-token=e243ff035113b5a9b5d5b939673556e063ac3b5a)](https://circleci.com/gh/armakuni/circleci-context-validator/tree/main)
 
 <!-- toc -->
 * [Usage](#usage)
