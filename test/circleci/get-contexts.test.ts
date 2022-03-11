@@ -1,7 +1,7 @@
 import {describe} from 'mocha'
 import {createRequest, getPath, validate} from '../../src/circleci/get-contexts'
 import {expect} from 'chai'
-import {ValidatorError} from '../../src/validator'
+import {ValidatorError} from '../../src/schema-validator'
 import {APIFetcher} from '../../src/circleci/v2-api'
 import {BadApiResponseDataError} from '../../src/circleci'
 

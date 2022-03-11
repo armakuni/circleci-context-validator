@@ -1,6 +1,6 @@
 import * as nock from 'nock'
 import {createFetcher, createRequest, mapRequest} from '../../src/circleci/v2-api'
-import {Validator, ValidatorError} from '../../src/validator'
+import {Validator, ValidatorError} from '../../src/schema-validator'
 import {expect} from 'chai'
 import {ApiRequestError, BadApiResponseDataError} from '../../src/circleci'
 
