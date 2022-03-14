@@ -1,37 +1,58 @@
-import {createFetcher, getContextEnvironmentVariables, getContexts} from '../circleci'
-import {Config} from '../config/config'
+import {APIFetcher, APIRequest, createFetcher, getContextEnvironmentVariables, getContexts} from '../circleci'
+import {Config, Context} from '../config/config'
 import {Environment} from '../lib/environment'
 import {ContextEnvVarMissingResult, ContextMissingResult, ContextValidatedResult, ContextValidatorResult} from './types'
 
-/* TODO: parallelize API calls and env var validation logic */
 export const validateContexts = async (config: Config, environment: Environment): Promise<ContextValidatorResult[]> => {
   const fetcher = createFetcher(environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
 
   const fetchedContexts = await getContexts(config.owner.id)(fetcher)
-
   const actualContextNames = new Map(fetchedContexts.map(context => [context.name, context.id]))
 
-  const results: ContextValidatorResult[] = []
+  const results: APIRequest<ContextValidatorResult[]>[] = []
   for (const context of config.contexts) {
     if (actualContextNames.has(context.name)) {
-      const expectedEnvVars = Object.keys(context['environment-variables'])
-      /* eslint-disable no-await-in-loop */
-      const envVars = await getContextEnvironmentVariables(actualContextNames.get(context.name) as string)(fetcher)
-      const envVarSet = new Set(envVars.map(env => env.variable))
-
-      for (const envVarName of expectedEnvVars) {
-        if (!envVarSet.has(envVarName)) {
-          results.push(new ContextEnvVarMissingResult(context.name, envVarName))
-        }
-      }
-
-      if (results.length === 0) {
-        results.push(new ContextValidatedResult(context.name))
-      }
+      results.push(processEnvVarsForContext(context, actualContextNames))
     } else {
-      results.push(new ContextMissingResult(context.name))
+      results.push(missingContextFetcher(context.name))
     }
   }
 
-  return results
+  const promises = results.map(result => result(fetcher))
+  const promiseResults = await Promise.all(promises)
+
+  return promiseResults.flat()
+}
+
+const missingContextFetcher = (contextName: string): APIRequest<ContextValidatorResult[]> => {
+  return async (_fetcher: APIFetcher) => {
+    return [new ContextMissingResult(contextName)]
+  }
+}
+
+/*
+ * Process a context's env vars provided in the context definition config
+ * Retrieve a context's env vars from the CircleCI API using a context ID
+ * Create a set of all the key names to be used as a lookup against the env vars from the config
+ */
+const processEnvVarsForContext = (context: Context, actualContextNames: Map<string, string>): APIRequest<ContextValidatorResult[]> => {
+  return async (fetcher: APIFetcher) => {
+    const configEnvVars = Object.keys(context['environment-variables'])
+
+    const apiEnvVars = await getContextEnvironmentVariables(actualContextNames.get(context.name) as string)(fetcher)
+    const apiEnvVarSet = new Set(apiEnvVars.map(env => env.variable))
+
+    const results: ContextValidatorResult[] = []
+    for (const envVarName of configEnvVars) {
+      if (!apiEnvVarSet.has(envVarName)) {
+        results.push(new ContextEnvVarMissingResult(context.name, envVarName))
+      }
+    }
+
+    if (results.length === 0) {
+      results.push(new ContextValidatedResult(context.name))
+    }
+
+    return results
+  }
 }
