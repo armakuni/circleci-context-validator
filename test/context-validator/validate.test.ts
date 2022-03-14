@@ -4,12 +4,15 @@ import {Config} from '../../src/config/config'
 import {Environment} from '../../src/lib/environment'
 import * as nock from 'nock'
 import {ContextEnvVarMissingResult, ContextMissingResult, ContextValidatedResult} from '../../src/context-validator/types'
+import {createFetcher} from '../../src/circleci'
 
 describe('context-validator', () => {
   describe('validate', () => {
     const environment: Environment = {
       CIRCLECI_PERSONAL_ACCESS_TOKEN: 'some-token',
     }
+
+    const fetcher = createFetcher('some-token')
 
     it('perform a successful validation', () => {
       const config: Config = {
@@ -49,7 +52,7 @@ describe('context-validator', () => {
         items: [],
       })
 
-      return expect(validateContexts(config, environment)).to.eventually.eql([new ContextValidatedResult('context-one')])
+      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextValidatedResult('context-one')])
     })
 
     it('perform a unsuccessful validation when a environment variable is missing', () => {
@@ -92,7 +95,7 @@ describe('context-validator', () => {
         items: [],
       })
 
-      return expect(validateContexts(config, environment)).to.eventually.eql([new ContextEnvVarMissingResult('context-one', 'AWS_SECRET_KEY_VALUE')])
+      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextEnvVarMissingResult('context-one', 'AWS_SECRET_KEY_VALUE')])
     })
 
     it('perform a unsuccessful validation due to missing context in circle', () => {
@@ -124,7 +127,7 @@ describe('context-validator', () => {
         items: [],
       })
 
-      return expect(validateContexts(config, environment)).to.eventually.eql([new ContextMissingResult('context-one')])
+      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextMissingResult('context-one')])
     })
   })
 })
