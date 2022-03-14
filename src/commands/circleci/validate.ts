@@ -3,7 +3,7 @@ import {loadYamlFile} from '../../lib/yaml-files'
 import {validateConfig} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
-import {ApiRequestError, BadApiResponseDataError} from '../../circleci'
+import {APIFetcher, ApiRequestError, BadApiResponseDataError, createFetcher} from '../../circleci'
 import {validateContexts} from '../../context-validator'
 import {ContextMissingResult, ContextValidatorResult} from '../../context-validator/types'
 import * as chalk from 'chalk' // eslint-disable-line unicorn/import-style
@@ -37,8 +37,9 @@ export default class Validate extends Command {
 
     const environment = this.loadEnvironment()
     const config = await Validate.loadConfig(flags['context-definitions'])
+    const fetcher = createFetcher(environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
 
-    const results = await this.validateCircleCIContexts(config, environment)
+    const results = await this.validateCircleCIContexts(config, fetcher)
 
     for (const result of results) {
       if (result instanceof ContextMissingResult) {
@@ -55,9 +56,9 @@ export default class Validate extends Command {
     return validateConfig(await loadYamlFile(configPath))
   }
 
-  private async validateCircleCIContexts(config: Config, environment: Environment): Promise<ContextValidatorResult[]> {
+  private async validateCircleCIContexts(config: Config, fetcher: APIFetcher): Promise<ContextValidatorResult[]> {
     try {
-      return await validateContexts(config, environment)
+      return await validateContexts(config)(fetcher)
     } catch (error) {
       if (error instanceof ApiRequestError || error instanceof BadApiResponseDataError) {
         this.error('CircleCI API request failed: \n' + (error as Error).toString(), {

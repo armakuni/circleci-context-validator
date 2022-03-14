@@ -1,27 +1,26 @@
-import {APIFetcher, APIRequest, createFetcher, getContextEnvironmentVariables, getContexts} from '../circleci'
+import {APIFetcher, APIRequest, getContextEnvironmentVariables, getContexts} from '../circleci'
 import {Config, Context} from '../config/config'
-import {Environment} from '../lib/environment'
 import {ContextEnvVarMissingResult, ContextMissingResult, ContextValidatedResult, ContextValidatorResult} from './types'
 
-export const validateContexts = async (config: Config, environment: Environment): Promise<ContextValidatorResult[]> => {
-  const fetcher = createFetcher(environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
+export const validateContexts = (config: Config): APIRequest<ContextValidatorResult[]> => {
+  return async (fetcher: APIFetcher) => {
+    const fetchedContexts = await getContexts(config.owner.id)(fetcher)
+    const actualContextNames = new Map(fetchedContexts.map(context => [context.name, context.id]))
 
-  const fetchedContexts = await getContexts(config.owner.id)(fetcher)
-  const actualContextNames = new Map(fetchedContexts.map(context => [context.name, context.id]))
-
-  const results: APIRequest<ContextValidatorResult[]>[] = []
-  for (const context of config.contexts) {
-    if (actualContextNames.has(context.name)) {
-      results.push(processEnvVarsForContext(context, actualContextNames))
-    } else {
-      results.push(missingContextFetcher(context.name))
+    const results: APIRequest<ContextValidatorResult[]>[] = []
+    for (const context of config.contexts) {
+      if (actualContextNames.has(context.name)) {
+        results.push(processEnvVarsForContext(context, actualContextNames))
+      } else {
+        results.push(missingContextFetcher(context.name))
+      }
     }
+
+    const promises = results.map(result => result(fetcher))
+    const promiseResults = await Promise.all(promises)
+
+    return promiseResults.flat()
   }
-
-  const promises = results.map(result => result(fetcher))
-  const promiseResults = await Promise.all(promises)
-
-  return promiseResults.flat()
 }
 
 const missingContextFetcher = (contextName: string): APIRequest<ContextValidatorResult[]> => {
