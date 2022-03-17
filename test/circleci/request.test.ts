@@ -1,24 +1,24 @@
-import {chainRequest, constantResponseRequest, mapRequest, sequenceRequest} from '../../src/circleci'
+import {constantResponseRequest, sequenceRequest} from '../../src/circleci'
 import {expect} from 'chai'
 
 describe('v2-api', () => {
   // eslint-disable-next-line unicorn/consistent-function-scoping
   const fetcher = () => Promise.resolve('')
 
-  describe('mapRequest', () => {
+  describe('.map', () => {
     it('maps the response', () => {
       const request = constantResponseRequest('response')
-      const response = mapRequest(x => `mapped ${x}`, request)(fetcher)
+      const response = request.map(x => `mapped ${x}`)(fetcher)
       return expect(response).to.eventually.eql('mapped response')
     })
   })
 
-  describe('chainRequest', () => {
-    it('chains the response', () => {
+  describe('.flatMap', () => {
+    it('flatMaps the response', () => {
       const request = constantResponseRequest('response')
-      const f = (response: string) => constantResponseRequest(`chained ${response}`)
-      const response = chainRequest(f, request)(fetcher)
-      return expect(response).to.eventually.eql('chained response')
+      const f = (response: string) => constantResponseRequest(`flatMapped ${response}`)
+      const response = request.flatMap(element => f(element))(fetcher)
+      return expect(response).to.eventually.eql('flatMapped response')
     })
   })
 

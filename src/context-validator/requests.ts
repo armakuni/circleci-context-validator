@@ -7,7 +7,6 @@ import {
   constantResponseRequest,
   FetchedContext,
   GetContextEnvironmentVariables,
-  mapRequest,
 } from '../circleci'
 
 interface IdentifiedContext extends ExpectedContext {
@@ -27,10 +26,7 @@ export const missingContext: CreateMissingContextRequest =
 
 export const fetchContextAndValidate: (_: GetContextEnvironmentVariables) => CreateValidateContextRequest =
   getContextEnvironmentVariables => context =>
-    mapRequest(
-      validateAllContextEnvVars(context),
-      getContextEnvironmentVariables(context.id),
-    )
+    getContextEnvironmentVariables(context.id).map(validateAllContextEnvVars(context))
 
 const contextIds: (_: FetchedContext[]) => Map<string, string> =
   contexts =>

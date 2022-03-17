@@ -3,7 +3,6 @@ import {createFetcher, createRequest} from '../../src/circleci/v2-api'
 import {SchemaValidator, SchemaValidatorError} from '../../src/schema-validator'
 import {expect} from 'chai'
 import {ApiRequestError, BadApiResponseDataError} from '../../src/circleci'
-import {mapRequest} from '../../src/circleci/request'
 
 describe('v2-api', () => {
   describe('createRequest', () => {
@@ -62,18 +61,6 @@ describe('v2-api', () => {
 
       return expect(createRequest('example-resource', messageValidator)(fetcher))
       .to.eventually.eql({message: 'hello'})
-    })
-  })
-
-  describe('mapRequest', () => {
-    it('maps the result', () => {
-      // eslint-disable-next-line unicorn/consistent-function-scoping
-      const fetcher = () => Promise.resolve('result')
-      // eslint-disable-next-line unicorn/consistent-function-scoping
-      const validator = (x: string) => `validated ${x}`
-      const request = createRequest('abc', validator)
-      const response = mapRequest(x => `mapped ${x}`, request)(fetcher)
-      return expect(response).to.eventually.eql('mapped validated result')
     })
   })
 })

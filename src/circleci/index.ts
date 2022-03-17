@@ -2,7 +2,7 @@ import * as GetContextsFunctions from './get-contexts'
 import {FetchedContext} from './get-contexts'
 import * as GetContextEnvironmentVariablesFunctions from './get-context-environment-variables'
 import {FetchedEnvVar} from './get-context-environment-variables'
-import {APIRequest, mapRequest} from './request'
+import {APIRequest} from './request'
 
 export * from './types'
 export {createFetcher} from './v2-api'
@@ -14,9 +14,9 @@ export type GetContextEnvironmentVariables = (ownerId: string) => APIRequest<Fet
 
 export const getContexts: GetContexts =
   ownerId =>
-    mapRequest(response => response.items, GetContextsFunctions.createRequest(ownerId))
+    GetContextsFunctions.createRequest(ownerId).map(response => response.items)
 
 export const getContextEnvironmentVariables: GetContextEnvironmentVariables =
   contextId =>
-    mapRequest(response => response.items, GetContextEnvironmentVariablesFunctions.createRequest(contextId))
+    GetContextEnvironmentVariablesFunctions.createRequest(contextId).map(response => response.items)
 

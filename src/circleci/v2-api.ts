@@ -1,11 +1,11 @@
 import {SchemaValidator, SchemaValidatorError} from '../schema-validator'
 import fetch from 'node-fetch'
 import {ApiRequestError, BadApiResponseDataError} from './types'
-import {APIFetcher, APIRequest} from './request'
+import {APIFetcher, APIRequest, newAPIRequest} from './request'
 
 export const createRequest: <Response>(path: string, validate: SchemaValidator<Response>) => APIRequest<Response> =
   (path, validate) =>
-    async (fetcher: APIFetcher) => validateResponse(validate, await fetcher(path))
+    newAPIRequest(async (fetcher: APIFetcher) => validateResponse(validate, await fetcher(path)))
 
 export const createFetcher: (_: string) => APIFetcher =
   personalAccessToken =>

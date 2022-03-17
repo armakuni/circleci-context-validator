@@ -1,9 +1,7 @@
 import {
   APIRequest,
-  chainRequest,
   GetContextEnvironmentVariables,
   GetContexts,
-  mapRequest,
   sequenceRequest,
 } from '../circleci'
 import {Config} from '../config/config'
@@ -12,7 +10,7 @@ import {fetchAllContextsAndValidate, fetchContextAndValidate, missingContext} fr
 
 const combineResults: <T>(_: APIRequest<T[]>[]) => APIRequest<T[]> =
   <T>(results: APIRequest<T[]>[]) =>
-    mapRequest((results: T[][]) => results.flat(), sequenceRequest(results))
+    sequenceRequest(results).map((results: T[][]) => results.flat())
 
 export const validateContexts: (config: Config, getContexts: GetContexts, getContextEnvironmentVariables: GetContextEnvironmentVariables) => APIRequest<ContextValidatorResult[]> =
   (config, getContexts, getContextEnvironmentVariables) => {
@@ -20,10 +18,6 @@ export const validateContexts: (config: Config, getContexts: GetContexts, getCon
     const contextsRequest = getContexts(config.owner.id)
 
     const validateContexts = fetchAllContextsAndValidate(createValidateContextRequest, missingContext, config.contexts)
-    const validateContextRequests = mapRequest(validateContexts, contextsRequest)
-    return chainRequest(combineResults, validateContextRequests)
+    const validateContextRequests = contextsRequest.map(fetchedContexts => validateContexts(fetchedContexts))
+    return validateContextRequests.flatMap(requests => combineResults(requests))
   }
-
-// export const validateContexts: (_: Config) => APIRequest<ContextValidatorResult[]> =
-//   config =>
-//     doValidateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)
