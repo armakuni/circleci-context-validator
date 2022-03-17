@@ -1,57 +1,29 @@
-import {APIFetcher, APIRequest, getContextEnvironmentVariables, getContexts} from '../circleci'
-import {Config, Context} from '../config/config'
-import {ContextEnvVarMissingResult, ContextMissingResult, ContextValidatedResult, ContextValidatorResult} from './types'
+import {
+  APIRequest,
+  chainRequest,
+  GetContextEnvironmentVariables,
+  GetContexts,
+  mapRequest,
+  sequenceRequest,
+} from '../circleci'
+import {Config} from '../config/config'
+import {ContextValidatorResult} from './types'
+import {fetchAllContextsAndValidate, fetchContextAndValidate, missingContext} from './requests'
 
-export const validateContexts = (config: Config): APIRequest<ContextValidatorResult[]> => {
-  return async (fetcher: APIFetcher) => {
-    const fetchedContexts = await getContexts(config.owner.id)(fetcher)
-    const actualContextNames = new Map(fetchedContexts.map(context => [context.name, context.id]))
+const combineResults: <T>(_: APIRequest<T[]>[]) => APIRequest<T[]> =
+  <T>(results: APIRequest<T[]>[]) =>
+    mapRequest((results: T[][]) => results.flat(), sequenceRequest(results))
 
-    const results: APIRequest<ContextValidatorResult[]>[] = []
-    for (const context of config.contexts) {
-      if (actualContextNames.has(context.name)) {
-        results.push(processEnvVarsForContext(context, actualContextNames))
-      } else {
-        results.push(missingContextFetcher(context.name))
-      }
-    }
+export const validateContexts: (config: Config, getContexts: GetContexts, getContextEnvironmentVariables: GetContextEnvironmentVariables) => APIRequest<ContextValidatorResult[]> =
+  (config, getContexts, getContextEnvironmentVariables) => {
+    const createValidateContextRequest = fetchContextAndValidate(getContextEnvironmentVariables)
+    const contextsRequest = getContexts(config.owner.id)
 
-    const promises = results.map(result => result(fetcher))
-    const promiseResults = await Promise.all(promises)
-
-    return promiseResults.flat()
+    const validateContexts = fetchAllContextsAndValidate(createValidateContextRequest, missingContext, config.contexts)
+    const validateContextRequests = mapRequest(validateContexts, contextsRequest)
+    return chainRequest(combineResults, validateContextRequests)
   }
-}
 
-const missingContextFetcher = (contextName: string): APIRequest<ContextValidatorResult[]> => {
-  return async (_fetcher: APIFetcher) => {
-    return [new ContextMissingResult(contextName)]
-  }
-}
-
-/*
- * Process a context's env vars provided in the context definition config
- * Retrieve a context's env vars from the CircleCI API using a context ID
- * Create a set of all the key names to be used as a lookup against the env vars from the config
- */
-const processEnvVarsForContext = (context: Context, actualContextNames: Map<string, string>): APIRequest<ContextValidatorResult[]> => {
-  return async (fetcher: APIFetcher) => {
-    const configEnvVars = Object.keys(context['environment-variables'])
-
-    const apiEnvVars = await getContextEnvironmentVariables(actualContextNames.get(context.name) as string)(fetcher)
-    const apiEnvVarSet = new Set(apiEnvVars.map(env => env.variable))
-
-    const results: ContextValidatorResult[] = []
-    for (const envVarName of configEnvVars) {
-      if (!apiEnvVarSet.has(envVarName)) {
-        results.push(new ContextEnvVarMissingResult(context.name, envVarName))
-      }
-    }
-
-    if (results.length === 0) {
-      results.push(new ContextValidatedResult(context.name))
-    }
-
-    return results
-  }
-}
+// export const validateContexts: (_: Config) => APIRequest<ContextValidatorResult[]> =
+//   config =>
+//     doValidateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)

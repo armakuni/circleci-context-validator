@@ -1,3 +1,4 @@
+import * as CircleCI from '../../circleci'
 import {Command, Flags} from '@oclif/core'
 import {loadYamlFile} from '../../lib/yaml-files'
 import {validateConfig} from '../../config/validator'
@@ -58,7 +59,7 @@ export default class Validate extends Command {
 
   private async validateCircleCIContexts(config: Config, fetcher: APIFetcher): Promise<ContextValidatorResult[]> {
     try {
-      return await validateContexts(config)(fetcher)
+      return await validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher)
     } catch (error) {
       if (error instanceof ApiRequestError || error instanceof BadApiResponseDataError) {
         this.error('CircleCI API request failed: \n' + (error as Error).toString(), {

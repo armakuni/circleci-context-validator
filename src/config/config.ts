@@ -11,14 +11,14 @@
 
 export interface Config {
   owner: Owner
-  contexts: Context[]
+  contexts: ExpectedContext[]
 }
 
 export interface Owner {
   id: string
 }
 
-export interface Context {
+export interface ExpectedContext {
   name: string
   purpose: string
   'environment-variables': EnvVarBlock
@@ -28,13 +28,13 @@ export interface Context {
  * Container interface for the environment variable name and it's corresponding metadata values
  */
 export interface EnvVarBlock {
-    [keyName: string] : EnvVar
+    [keyName: string] : ExpectedEnvVar
 }
 
 /**
  * The metadata values of the environment variable key
  */
-export interface EnvVar {
+export interface ExpectedEnvVar {
     state: string
     purpose: string
     labels: string[]

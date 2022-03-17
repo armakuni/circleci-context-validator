@@ -1,4 +1,5 @@
 import {expect} from 'chai'
+import * as CircleCI from '../../src/circleci'
 import {validateContexts} from '../../src/context-validator'
 import {Config} from '../../src/config/config'
 import {Environment} from '../../src/lib/environment'
@@ -52,7 +53,8 @@ describe('context-validator', () => {
         items: [],
       })
 
-      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextValidatedResult('context-one')])
+      return expect(validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher))
+      .to.eventually.eql([new ContextValidatedResult('context-one')])
     })
 
     it('perform a unsuccessful validation when a environment variable is missing', () => {
@@ -95,7 +97,8 @@ describe('context-validator', () => {
         items: [],
       })
 
-      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextEnvVarMissingResult('context-one', 'AWS_SECRET_KEY_VALUE')])
+      return expect(validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher))
+      .to.eventually.eql([new ContextEnvVarMissingResult('context-one', 'AWS_SECRET_KEY_VALUE')])
     })
 
     it('perform a unsuccessful validation due to missing context in circle', () => {
@@ -127,7 +130,8 @@ describe('context-validator', () => {
         items: [],
       })
 
-      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextMissingResult('context-one')])
+      return expect(validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher))
+      .to.eventually.eql([new ContextMissingResult('context-one')])
     })
   })
 })

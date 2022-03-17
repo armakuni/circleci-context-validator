@@ -1,12 +1,12 @@
-import {validateWithJsonSchema, Validator} from '../schema-validator'
+import {validateWithJsonSchema, SchemaValidator} from '../schema-validator'
 import {JSONSchemaType} from 'ajv'
 import * as API from './v2-api'
-import {APIRequest} from './v2-api'
 import {PaginatedResponse, paginatedSchema} from './pagination'
+import {APIRequest} from './request'
 
-export type GetContextsResponse = PaginatedResponse<ContextItem>
+export type GetContextsResponse = PaginatedResponse<FetchedContext>
 
-export interface ContextItem {
+export interface FetchedContext {
   name: string
   id: string
 }
@@ -26,14 +26,11 @@ const schema: JSONSchemaType<GetContextsResponse> =
     },
   })
 
-export const getPath =
-  (ownerId: string): string => `context?owner-id=${ownerId}`
+export const getPath: (_: string) => string =
+  ownerId => `context?owner-id=${ownerId}`
 
-export const validate: Validator<GetContextsResponse> =
+export const validate: SchemaValidator<GetContextsResponse> =
   validateWithJsonSchema(schema)
 
-export const createRequest =
-  (ownerId: string): APIRequest<GetContextsResponse> => API.createRequest(
-    getPath(ownerId),
-    validate,
-  )
+export const createRequest: (_: string) => APIRequest<GetContextsResponse> =
+  ownerId => API.createRequest(getPath(ownerId), validate)

@@ -1,9 +1,9 @@
 import {describe} from 'mocha'
 import {createRequest, getPath, validate} from '../../src/circleci/get-contexts'
 import {expect} from 'chai'
-import {ValidatorError} from '../../src/schema-validator'
-import {APIFetcher} from '../../src/circleci/v2-api'
+import {SchemaValidatorError} from '../../src/schema-validator'
 import {BadApiResponseDataError} from '../../src/circleci'
+import {APIFetcher} from '../../src/circleci/request'
 
 describe('get-contexts', () => {
   describe('getPath', () => {
@@ -33,19 +33,19 @@ describe('get-contexts', () => {
     it('throws when items is missing', () => {
       delete response.items
       expect(() => validate(response))
-      .to.throw(ValidatorError, /must have required property 'items'/)
+      .to.throw(SchemaValidatorError, /must have required property 'items'/)
     })
 
     it('throws when name is missing from a context', () => {
       delete response.items[0].name
       expect(() => validate(response))
-      .to.throw(ValidatorError, /must have required property 'name'/)
+      .to.throw(SchemaValidatorError, /must have required property 'name'/)
     })
 
     it('throws when id is missing from a context', () => {
       delete response.items[0].id
       expect(() => validate(response))
-      .to.throw(ValidatorError, /must have required property 'id'/)
+      .to.throw(SchemaValidatorError, /must have required property 'id'/)
     })
 
     it('returns the response', () => {
