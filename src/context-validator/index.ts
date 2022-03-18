@@ -43,7 +43,7 @@ const processEnvVarsForContext = (context: Context, actualContextNames: Map<stri
 
     const results: ContextValidatorResult[] = []
     for (const envVarName of configEnvVars) {
-      if (!apiEnvVarSet.has(envVarName)) {
+      if (context['environment-variables'][envVarName].state !== 'optional' && !apiEnvVarSet.has(envVarName)) {
         results.push(new ContextEnvVarMissingResult(context.name, envVarName))
       }
     }
