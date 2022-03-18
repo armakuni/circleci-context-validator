@@ -1,6 +1,6 @@
 import {APIFetcher, APIRequest, getContextEnvironmentVariables, getContexts} from '../circleci'
 import {Config, Context} from '../config/config'
-import {ContextEnvVarMissingResult, ContextMissingResult, ContextValidatedResult, ContextValidatorResult} from './types'
+import {ContextEnvVarMissingResult, ContextEnvVarUnexpectedResult, ContextMissingResult, ContextValidatedResult, ContextValidatorResult} from './types'
 
 export const validateContexts = (config: Config): APIRequest<ContextValidatorResult[]> => {
   return async (fetcher: APIFetcher) => {
@@ -33,6 +33,8 @@ const missingContextFetcher = (contextName: string): APIRequest<ContextValidator
  * Process a context's env vars provided in the context definition config
  * Retrieve a context's env vars from the CircleCI API using a context ID
  * Create a set of all the key names to be used as a lookup against the env vars from the config
+ * Determine if the configured env var is optional/required against what is returned against the API
+ * Determine if there are additional unexpected env vars returned from the API that are not configured
  */
 const processEnvVarsForContext = (context: Context, actualContextNames: Map<string, string>): APIRequest<ContextValidatorResult[]> => {
   return async (fetcher: APIFetcher) => {
@@ -45,6 +47,12 @@ const processEnvVarsForContext = (context: Context, actualContextNames: Map<stri
     for (const envVarName of configEnvVars) {
       if (context['environment-variables'][envVarName].state !== 'optional' && !apiEnvVarSet.has(envVarName)) {
         results.push(new ContextEnvVarMissingResult(context.name, envVarName))
+      }
+    }
+
+    for (const envVarName of apiEnvVarSet) {
+      if (!configEnvVars.includes(envVarName)) {
+        results.push(new ContextEnvVarUnexpectedResult(context.name, envVarName))
       }
     }
 
