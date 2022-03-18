@@ -1,4 +1,4 @@
-export type ContextValidatorResult = ContextMissingResult | ContextValidatedResult | ContextEnvVarMissingResult
+export type ContextValidatorResult = ContextMissingResult | ContextValidatedResult | ContextEnvVarMissingResult | ContextEnvVarUnexpectedResult
 
 export class ContextValidatedResult {
   // Used for comparison purposes only
@@ -14,5 +14,10 @@ export class ContextMissingResult {
 
 export class ContextEnvVarMissingResult {
   private readonly tag = 'ContextEnvVarMissingResult'
+  constructor(public readonly contextName: string, public readonly envVarName: string) {} // eslint no-useless-constructor
+}
+
+export class ContextEnvVarUnexpectedResult {
+  private readonly tag = 'ContextEnvVarUnexpectedResult'
   constructor(public readonly contextName: string, public readonly envVarName: string) {} // eslint no-useless-constructor
 }
