@@ -10,7 +10,7 @@ import {
 } from './types'
 import * as EnvVars from './environment-variables'
 import {APIRequest, constantResponseRequest, GetContextEnvironmentVariables} from '../circleci'
-import {createRequestsWithDefault} from './request-helpers'
+import {createWithDefault} from './helpers'
 import * as Contexts from './contexts'
 
 type CreateMissingContextRequest = (_: ExpectedContext) => APIRequest<ContextValidatorResult[]>
@@ -36,10 +36,10 @@ export const validateContextsRequest:
     => (_: (ExpectedContext | IdentifiedContext)[])
     => APIRequest<ContextValidatorResult[]>[] =
   (createFetchContextAndValidateRequest, createMissingContextRequest) => contexts =>
-    createRequestsWithDefault(
+    contexts.map(context => createWithDefault(
       Contexts.isIdentified,
       context => createFetchContextAndValidateRequest(context as IdentifiedContext),
       createMissingContextRequest,
-      contexts,
-    )
+      context,
+    ))
 

@@ -1,15 +1,16 @@
 import * as CircleCI from '../../circleci'
+import {APIFetcher, ApiRequestError, BadApiResponseDataError, createFetcher} from '../../circleci'
 import {Command, Flags} from '@oclif/core'
 import {loadYamlFile} from '../../lib/yaml-files'
 import {validateConfig} from '../../config/validator'
 import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
-import {APIFetcher, ApiRequestError, BadApiResponseDataError, createFetcher} from '../../circleci'
 import {validateContexts} from '../../context-validator'
 import {
   ContextFailedToValidateResult,
   ContextMissingResult,
-  ContextValidatorResult, MissingEnvVarError, UnexpectedEnvVarError,
+  ContextValidatorResult,
+  MissingEnvVarError,
 } from '../../context-validator/types'
 import * as chalk from 'chalk' // eslint-disable-line unicorn/import-style
 

@@ -43,7 +43,5 @@ export const analyseAll: (context: ExpectedEnvVarBlock) => Analyser =
   }
 
 export const validateAll: (analyzer: Analyser, validator: Validator) => (_: FetchedEnvVar[]) => EnvVarValidationError[] =
-  (analyse, validate) => fetchedEnvVars => {
-    const errors = analyse(fetchedEnvVars).flatMap(envVar => validate(envVar))
-    return [...errors]
-  }
+  (analyse, validate) => fetchedEnvVars =>
+    analyse(fetchedEnvVars).flatMap(envVar => validate(envVar))

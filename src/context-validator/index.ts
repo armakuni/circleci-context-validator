@@ -3,7 +3,7 @@ import {Config} from '../config/config'
 import {ContextValidatorResult} from './types'
 import {createValidateContextRequest, missingContextRequest, validateContextsRequest} from './requests'
 import * as Contexts from './contexts'
-import {combineResults} from './request-helpers'
+import {combineResults} from './helpers'
 
 export function validateContexts(
   config: Config,
