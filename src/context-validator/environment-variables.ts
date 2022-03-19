@@ -1,4 +1,4 @@
-import {ExpectedContext, ExpectedEnvVar} from '../config/config'
+import {ExpectedEnvVarBlock, ExpectedEnvVar} from '../config/config'
 import {FetchedEnvVar} from '../circleci/get-context-environment-variables'
 import {EnvVarValidationError, MissingEnvVarError} from './types'
 
@@ -19,11 +19,11 @@ export const validateSingle: Validator =
   ({name, exists}) =>
     exists ? [] : [new MissingEnvVarError(name)]
 
-export const analyseAll: (context: ExpectedContext) => Analyser =
-  context => fetchedEnvVars => {
+export const analyseAll: (context: ExpectedEnvVarBlock) => Analyser =
+  expectedEnvVars => fetchedEnvVars => {
     const existingEnvVars = new Set(fetchedEnvVars.map(env => env.variable))
     return Object
-    .entries(context['environment-variables'])
+    .entries(expectedEnvVars)
     .map(([envVarName, envVar]) => ({name: envVarName, ...envVar}))
     .map(envVar => ({exists: existingEnvVars.has(envVar.name), ...envVar}))
   }

@@ -21,13 +21,13 @@ export interface Owner {
 export interface ExpectedContext {
   name: string
   purpose: string
-  'environment-variables': EnvVarBlock
+  'environment-variables': ExpectedEnvVarBlock
 }
 
 /**
  * Container interface for the environment variable name and it's corresponding metadata values
  */
-export interface EnvVarBlock {
+export interface ExpectedEnvVarBlock {
     [keyName: string] : ExpectedEnvVar
 }
 

@@ -6,7 +6,7 @@ import {
   validateSingle,
   Validator,
 } from '../../src/context-validator/environment-variables'
-import {ExpectedContext} from '../../src/config/config'
+import {ExpectedEnvVarBlock} from '../../src/config/config'
 import {MissingEnvVarError} from '../../src/context-validator/types'
 import {FetchedEnvVar} from '../../src/circleci/get-context-environment-variables'
 
@@ -36,15 +36,11 @@ describe('context-validator', () => {
   })
 
   describe('analyseAll', () => {
-    const context: ExpectedContext = {
-      name: 'example-context',
-      purpose: '',
-      'environment-variables': {
-        ENV_VAR1: {
-          state: 'required',
-          purpose: 'example-purpose',
-          labels: ['label1', 'label2'],
-        },
+    const context: ExpectedEnvVarBlock = {
+      ENV_VAR1: {
+        state: 'required',
+        purpose: 'example-purpose',
+        labels: ['label1', 'label2'],
       },
     }
 
