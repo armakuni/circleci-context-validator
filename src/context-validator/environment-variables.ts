@@ -1,15 +1,13 @@
 import {ExpectedContext, ExpectedEnvVar} from '../config/config'
 import {FetchedEnvVar} from '../circleci/get-context-environment-variables'
-import {ContextEnvVarMissingResult, ContextSuccessfullyValidatedResult, ContextValidatorResult} from './types'
+import {EnvVarValidationError, MissingEnvVarError} from './types'
 
 export interface AnalysedEnvVar extends ExpectedEnvVar {
   name: string
   exists: boolean
 }
 
-type WithContext<T> = (context: ExpectedContext) => T
-
-export type Validator = (_: AnalysedEnvVar) => ContextValidatorResult[]
+export type Validator = (_: AnalysedEnvVar) => EnvVarValidationError[]
 
 export type Analyser = (_: FetchedEnvVar[]) => AnalysedEnvVar[]
 
@@ -17,11 +15,11 @@ const listOrDefault: <T extends any[]>(list: T, defaultList: T) => T =
   (list, defaultList) =>
     list.length > 0 ? list : defaultList
 
-export const validateSingle: WithContext<Validator> =
-  context => ({name, exists}) =>
-    exists ? [] : [new ContextEnvVarMissingResult(context.name, name)]
+export const validateSingle: Validator =
+  ({name, exists}) =>
+    exists ? [] : [new MissingEnvVarError(name)]
 
-export const analyseAll: WithContext<Analyser> =
+export const analyseAll: (context: ExpectedContext) => Analyser =
   context => fetchedEnvVars => {
     const existingEnvVars = new Set(fetchedEnvVars.map(env => env.variable))
     return Object
@@ -30,9 +28,9 @@ export const analyseAll: WithContext<Analyser> =
     .map(envVar => ({exists: existingEnvVars.has(envVar.name), ...envVar}))
   }
 
-export const validateAll: WithContext<(analyzer: Analyser, validator: Validator) => (_: FetchedEnvVar[]) => ContextValidatorResult[]> =
-  context => (analyse, validate) => fetchedEnvVars =>
+export const validateAll: (analyzer: Analyser, validator: Validator) => (_: FetchedEnvVar[]) => EnvVarValidationError[] =
+  (analyse, validate) => fetchedEnvVars =>
     listOrDefault(
       analyse(fetchedEnvVars).flatMap(envVar => validate(envVar)),
-      [new ContextSuccessfullyValidatedResult(context.name)] as ContextValidatorResult[],
+      [],
     )

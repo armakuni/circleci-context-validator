@@ -1,6 +1,13 @@
 import {ExpectedContext} from '../config/config'
 import {FetchedEnvVar} from '../circleci/get-context-environment-variables'
-import {ContextMissingResult, ContextValidatorResult, IdentifiedContext} from './types'
+import {
+  ContextFailedToValidateResult,
+  ContextMissingResult,
+  ContextSuccessfullyValidatedResult,
+  ContextValidatorResult,
+  EnvVarValidationError,
+  IdentifiedContext,
+} from './types'
 import * as EnvVars from './environment-variables'
 import {APIRequest, constantResponseRequest, GetContextEnvironmentVariables} from '../circleci'
 import {createRequestsWithDefault} from './request-helpers'
@@ -10,9 +17,9 @@ type CreateMissingContextRequest = (_: ExpectedContext) => APIRequest<ContextVal
 
 type CreateValidateContextRequest = (_: IdentifiedContext) => APIRequest<ContextValidatorResult[]>
 
-const validateAllContextEnvVars: (_: ExpectedContext) => (_: FetchedEnvVar[]) => ContextValidatorResult[] =
+const validateAllContextEnvVars: (_: ExpectedContext) => (_: FetchedEnvVar[]) => EnvVarValidationError[] =
   context =>
-    EnvVars.validateAll(context)(EnvVars.analyseAll(context), EnvVars.validateSingle(context))
+    EnvVars.validateAll(EnvVars.analyseAll(context), EnvVars.validateSingle)
 
 export const missingContextRequest: CreateMissingContextRequest =
   context =>
@@ -20,7 +27,9 @@ export const missingContextRequest: CreateMissingContextRequest =
 
 export const createValidateContextRequest : (_: GetContextEnvironmentVariables) => CreateValidateContextRequest =
   getContextEnvironmentVariables => context =>
-    getContextEnvironmentVariables(context.id).map(validateAllContextEnvVars(context))
+    getContextEnvironmentVariables(context.id)
+    .map(validateAllContextEnvVars(context))
+    .map(errors => errors.length > 0 ? [new ContextFailedToValidateResult(context.name, errors)] : [new ContextSuccessfullyValidatedResult(context.name)])
 
 export const validateContextsRequest:
   (validate: CreateValidateContextRequest, missing: CreateMissingContextRequest)

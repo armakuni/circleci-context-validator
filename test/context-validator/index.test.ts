@@ -4,7 +4,12 @@ import {validateContexts} from '../../src/context-validator'
 import {Config} from '../../src/config/config'
 import {Environment} from '../../src/lib/environment'
 import * as nock from 'nock'
-import {ContextEnvVarMissingResult, ContextMissingResult, ContextSuccessfullyValidatedResult} from '../../src/context-validator/types'
+import {
+  MissingEnvVarError,
+  ContextMissingResult,
+  ContextSuccessfullyValidatedResult,
+  ContextFailedToValidateResult,
+} from '../../src/context-validator/types'
 import {createFetcher} from '../../src/circleci'
 
 describe('context-validator', () => {
@@ -98,7 +103,12 @@ describe('context-validator', () => {
       })
 
       return expect(validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher))
-      .to.eventually.eql([new ContextEnvVarMissingResult('context-one', 'AWS_SECRET_KEY_VALUE')])
+      .to.eventually.eql([
+        new ContextFailedToValidateResult(
+          'context-one',
+          [new MissingEnvVarError('AWS_SECRET_KEY_VALUE')],
+        ),
+      ])
     })
 
     it('perform a unsuccessful validation due to missing context in circle', () => {

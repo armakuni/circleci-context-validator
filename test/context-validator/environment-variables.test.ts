@@ -7,18 +7,12 @@ import {
   Validator,
 } from '../../src/context-validator/environment-variables'
 import {ExpectedContext} from '../../src/config/config'
-import {ContextEnvVarMissingResult, ContextSuccessfullyValidatedResult} from '../../src/context-validator/types'
+import {MissingEnvVarError} from '../../src/context-validator/types'
 import {FetchedEnvVar} from '../../src/circleci/get-context-environment-variables'
 
 describe('context-validator', () => {
   describe('validateSingle', () => {
-    const context: ExpectedContext = {
-      name: 'example-context',
-      purpose: '',
-      'environment-variables': {},
-    }
-
-    it('returns ContextEnvVarMissingResult when the env var does not exist', () => {
+    it('returns MissingEnvVarError when the env var does not exist', () => {
       const envVar: AnalysedEnvVar = {
         exists: false,
         labels: [],
@@ -26,7 +20,7 @@ describe('context-validator', () => {
         purpose: '',
         state: '',
       }
-      expect(validateSingle(context)(envVar)).to.eql([new ContextEnvVarMissingResult('example-context', 'example_env_var')])
+      expect(validateSingle(envVar)).to.eql([new MissingEnvVarError('example_env_var')])
     })
 
     it('returns an empty list when the env var does exist', () => {
@@ -37,7 +31,7 @@ describe('context-validator', () => {
         purpose: '',
         state: '',
       }
-      expect(validateSingle(context)(envVar)).to.eql([])
+      expect(validateSingle(envVar)).to.eql([])
     })
   })
 
@@ -95,12 +89,6 @@ describe('context-validator', () => {
   })
 
   describe('validateAll', () => {
-    const context: ExpectedContext = {
-      name: 'example-context',
-      purpose: '',
-      'environment-variables': {},
-    }
-
     // eslint-disable-next-line unicorn/consistent-function-scoping
     const analyser: Analyser = fetchedEnvVars => fetchedEnvVars.map(({variable}) => ({
       name: variable,
@@ -111,29 +99,27 @@ describe('context-validator', () => {
     }))
 
     it('returns the combined the output of all validates', () => {
-      const validator: Validator = analysedEnvVar => [new ContextEnvVarMissingResult('example-context', analysedEnvVar.name)]
+      const validator: Validator = analysedEnvVar => [new MissingEnvVarError(analysedEnvVar.name)]
 
       const fetched = [{variable: 'ENV_VAR1'}, {variable: 'ENV_VAR2'}]
 
-      const result = validateAll(context)(analyser, validator)(fetched)
+      const result = validateAll(analyser, validator)(fetched)
 
       expect(result).to.eql([
-        new ContextEnvVarMissingResult('example-context', 'ENV_VAR1'),
-        new ContextEnvVarMissingResult('example-context', 'ENV_VAR2'),
+        new MissingEnvVarError('ENV_VAR1'),
+        new MissingEnvVarError('ENV_VAR2'),
       ])
     })
 
-    it('returns ContextValidatedResult when no other results results are present', () => {
+    it('returns empty array when no other results results are present', () => {
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const validator: Validator = _ => []
 
       const fetched = [{variable: 'ENV_VAR1'}, {variable: 'ENV_VAR2'}]
 
-      const result = validateAll(context)(analyser, validator)(fetched)
+      const result = validateAll(analyser, validator)(fetched)
 
-      expect(result).to.eql([
-        new ContextSuccessfullyValidatedResult('example-context'),
-      ])
+      expect(result).to.eql([])
     })
   })
 })
