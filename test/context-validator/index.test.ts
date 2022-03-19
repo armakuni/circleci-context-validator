@@ -1,25 +1,49 @@
 import {expect} from 'chai'
-import * as CircleCI from '../../src/circleci'
 import {validateContexts} from '../../src/context-validator'
 import {Config} from '../../src/config/config'
-import {Environment} from '../../src/lib/environment'
-import * as nock from 'nock'
 import {
-  MissingEnvVarError,
+  ContextFailedToValidateResult,
   ContextMissingResult,
   ContextSuccessfullyValidatedResult,
-  ContextFailedToValidateResult,
+  MissingEnvVarError,
 } from '../../src/context-validator/types'
-import {createFetcher} from '../../src/circleci'
+import {
+  APIFetcher,
+  APIRequest,
+  ApiRequestError,
+  constantResponseRequest,
+  FetchedContext,
+  GetContextEnvironmentVariables,
+  GetContexts,
+} from '../../src/circleci'
+import {FetchedEnvVar} from '../../src/circleci/get-context-environment-variables'
+
+const mockAPIRequest: <Input, Response>(error: (_: Input) => string) => (responses: { key: Input, response: Response }) => (_: Input) => APIRequest<Response> =
+  errorMessage => (...responses) => {
+    const responseMap = new Map(Object.values(responses).map(({key, response}) => [key, response]))
+
+    return input => {
+      const response = responseMap.get(input)
+      if (response === undefined) {
+        throw new ApiRequestError(errorMessage(input))
+      }
+
+      return constantResponseRequest(response)
+    }
+  }
+
+const mockGetContexts: (...responses: { key: string, response: FetchedContext[] }[]) => GetContexts =
+  mockAPIRequest(ownerId => `No mocked getContexts request for owner ID ${ownerId}`)
+
+const mockGetContextsEnvironmentVariables: (...responses: { key: string, response: FetchedEnvVar[] }[]) => GetContextEnvironmentVariables =
+  mockAPIRequest(contextId => `No mocked getContextEnvironmentVariables request for context ID ${contextId}`)
+
+const fetcher: APIFetcher = _ => {
+  throw new Error('will not get called')
+}
 
 describe('context-validator', () => {
   describe('validate', () => {
-    const environment: Environment = {
-      CIRCLECI_PERSONAL_ACCESS_TOKEN: 'some-token',
-    }
-
-    const fetcher = createFetcher('some-token')
-
     it('perform a successful validation', () => {
       const config: Config = {
         owner: {
@@ -34,31 +58,27 @@ describe('context-validator', () => {
         ],
       }
 
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': config.owner.id})
-      .matchHeader('circle-token', environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
-      .reply(200, {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
-        items: [{
-          name: 'context-one',
-          id: '00a9f111-55f6-46b9-8b85-57845802075d',
-          created_at: '2020-10-14T09:02:53.453Z', // eslint-disable-line camelcase
-        }, {
-          name: 'context-two',
-          id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5',
-          created_at: '2021-09-02T14:42:20.126Z', // eslint-disable-line camelcase
-        }],
-      })
-      nock('https://circleci.com')
-      .get('/api/v2/context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable')
-      .matchHeader('circle-token', environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
-      .reply(200, {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
-        items: [],
+      const getContexts = mockGetContexts(
+        {
+          key: config.owner.id,
+          response: [
+            {
+              name: 'context-one',
+              id: '00a9f111-55f6-46b9-8b85-57845802075d',
+            }, {
+              name: 'context-two',
+              id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5',
+            },
+          ],
+        },
+      )
+
+      const getContextEnvironmentVariables = mockGetContextsEnvironmentVariables({
+        key: '00a9f111-55f6-46b9-8b85-57845802075d',
+        response: [],
       })
 
-      return expect(validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher))
+      return expect(validateContexts(config, getContexts, getContextEnvironmentVariables)(fetcher))
       .to.eventually.eql([new ContextSuccessfullyValidatedResult('context-one')])
     })
 
@@ -82,27 +102,22 @@ describe('context-validator', () => {
         ],
       }
 
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': config.owner.id})
-      .matchHeader('circle-token', environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
-      .reply(200, {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
-        items: [{
-          name: 'context-one',
-          id: '00a9f111-55f6-46b9-8b85-57845802075d',
-          created_at: '2020-10-14T09:02:53.453Z', // eslint-disable-line camelcase
-        }],
-      })
-      nock('https://circleci.com')
-      .get('/api/v2/context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable')
-      .matchHeader('circle-token', environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
-      .reply(200, {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
-        items: [],
+      const getContexts = mockGetContexts({
+        key: config.owner.id,
+        response: [
+          {
+            name: 'context-one',
+            id: '00a9f111-55f6-46b9-8b85-57845802075d',
+          },
+        ],
       })
 
-      return expect(validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher))
+      const getContextEnvironmentVariables = mockGetContextsEnvironmentVariables({
+        key: '00a9f111-55f6-46b9-8b85-57845802075d',
+        response: [],
+      })
+
+      return expect(validateContexts(config, getContexts, getContextEnvironmentVariables)(fetcher))
       .to.eventually.eql([
         new ContextFailedToValidateResult(
           'context-one',
@@ -131,16 +146,14 @@ describe('context-validator', () => {
         ],
       }
 
-      nock('https://circleci.com')
-      .get('/api/v2/context')
-      .query({'owner-id': config.owner.id})
-      .matchHeader('circle-token', environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
-      .reply(200, {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
-        items: [],
+      const getContexts = mockGetContexts({
+        key: config.owner.id,
+        response: [],
       })
 
-      return expect(validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher))
+      const getContextEnvironmentVariables = mockGetContextsEnvironmentVariables()
+
+      return expect(validateContexts(config, getContexts, getContextEnvironmentVariables)(fetcher))
       .to.eventually.eql([new ContextMissingResult('context-one')])
     })
   })

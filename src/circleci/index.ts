@@ -10,7 +10,7 @@ export {GetContextsResponse, FetchedContext} from './get-contexts'
 export * from './request'
 
 export type GetContexts = (ownerId: string) => APIRequest<FetchedContext[]>
-export type GetContextEnvironmentVariables = (ownerId: string) => APIRequest<FetchedEnvVar[]>
+export type GetContextEnvironmentVariables = (contextId: string) => APIRequest<FetchedEnvVar[]>
 
 export const getContexts: GetContexts =
   ownerId =>
