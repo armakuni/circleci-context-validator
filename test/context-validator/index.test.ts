@@ -4,7 +4,7 @@ import {validateContexts} from '../../src/context-validator'
 import {Config} from '../../src/config/config'
 import {Environment} from '../../src/lib/environment'
 import * as nock from 'nock'
-import {ContextEnvVarMissingResult, ContextMissingResult, ContextValidatedResult} from '../../src/context-validator/types'
+import {ContextEnvVarMissingResult, ContextMissingResult, ContextSuccessfullyValidatedResult} from '../../src/context-validator/types'
 import {createFetcher} from '../../src/circleci'
 
 describe('context-validator', () => {
@@ -54,7 +54,7 @@ describe('context-validator', () => {
       })
 
       return expect(validateContexts(config, CircleCI.getContexts, CircleCI.getContextEnvironmentVariables)(fetcher))
-      .to.eventually.eql([new ContextValidatedResult('context-one')])
+      .to.eventually.eql([new ContextSuccessfullyValidatedResult('context-one')])
     })
 
     it('perform a unsuccessful validation when a environment variable is missing', () => {

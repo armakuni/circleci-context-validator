@@ -7,7 +7,7 @@ import {
   Validator,
 } from '../../src/context-validator/environment-variables'
 import {ExpectedContext} from '../../src/config/config'
-import {ContextEnvVarMissingResult, ContextValidatedResult} from '../../src/context-validator/types'
+import {ContextEnvVarMissingResult, ContextSuccessfullyValidatedResult} from '../../src/context-validator/types'
 import {FetchedEnvVar} from '../../src/circleci/get-context-environment-variables'
 
 describe('context-validator', () => {
@@ -132,7 +132,7 @@ describe('context-validator', () => {
       const result = validateAll(context)(analyser, validator)(fetched)
 
       expect(result).to.eql([
-        new ContextValidatedResult('example-context'),
+        new ContextSuccessfullyValidatedResult('example-context'),
       ])
     })
   })

@@ -1,6 +1,6 @@
 import {ExpectedContext, ExpectedEnvVar} from '../config/config'
 import {FetchedEnvVar} from '../circleci/get-context-environment-variables'
-import {ContextEnvVarMissingResult, ContextValidatedResult, ContextValidatorResult} from './types'
+import {ContextEnvVarMissingResult, ContextSuccessfullyValidatedResult, ContextValidatorResult} from './types'
 
 export interface AnalysedEnvVar extends ExpectedEnvVar {
   name: string
@@ -34,5 +34,5 @@ export const validateAll: WithContext<(analyzer: Analyser, validator: Validator)
   context => (analyse, validate) => fetchedEnvVars =>
     listOrDefault(
       analyse(fetchedEnvVars).flatMap(envVar => validate(envVar)),
-      [new ContextValidatedResult(context.name)] as ContextValidatorResult[],
+      [new ContextSuccessfullyValidatedResult(context.name)] as ContextValidatorResult[],
     )

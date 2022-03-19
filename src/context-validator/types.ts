@@ -1,10 +1,10 @@
 import {ExpectedContext} from '../config/config'
 
-export type ContextValidatorResult = ContextMissingResult | ContextValidatedResult | ContextEnvVarMissingResult
+export type ContextValidatorResult = ContextMissingResult | ContextSuccessfullyValidatedResult | ContextEnvVarMissingResult
 
-export class ContextValidatedResult {
+export class ContextSuccessfullyValidatedResult {
   // Used for comparison purposes only
-  private readonly tag = 'ContextValidatedResult'
+  private readonly tag = 'ContextSuccessfullyValidatedResult'
   // eslint no-useless-constructor: "off"
   constructor(public readonly contextName: string) {}
 }
