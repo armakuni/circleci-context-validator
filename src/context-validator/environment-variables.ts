@@ -11,10 +11,6 @@ export type Validator = (_: AnalysedEnvVar) => EnvVarValidationError[]
 
 export type Analyser = (_: FetchedEnvVar[]) => AnalysedEnvVar[]
 
-const listOrDefault: <T extends any[]>(list: T, defaultList: T) => T =
-  (list, defaultList) =>
-    list.length > 0 ? list : defaultList
-
 export const validateSingle: Validator =
   ({name, exists}) =>
     exists ? [] : [new MissingEnvVarError(name)]
@@ -30,7 +26,4 @@ export const analyseAll: (context: ExpectedEnvVarBlock) => Analyser =
 
 export const validateAll: (analyzer: Analyser, validator: Validator) => (_: FetchedEnvVar[]) => EnvVarValidationError[] =
   (analyse, validate) => fetchedEnvVars =>
-    listOrDefault(
-      analyse(fetchedEnvVars).flatMap(envVar => validate(envVar)),
-      [],
-    )
+    analyse(fetchedEnvVars).flatMap(envVar => validate(envVar))
