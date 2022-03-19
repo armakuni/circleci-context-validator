@@ -1,3 +1,5 @@
+import {ExpectedContext} from '../config/config'
+
 export type ContextValidatorResult = ContextMissingResult | ContextValidatedResult | ContextEnvVarMissingResult
 
 export class ContextValidatedResult {
@@ -15,4 +17,8 @@ export class ContextMissingResult {
 export class ContextEnvVarMissingResult {
   private readonly tag = 'ContextEnvVarMissingResult'
   constructor(public readonly contextName: string, public readonly envVarName: string) {} // eslint no-useless-constructor
+}
+
+export interface IdentifiedContext extends ExpectedContext {
+  id: string
 }
