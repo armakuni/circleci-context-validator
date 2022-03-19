@@ -60,7 +60,7 @@ describe('circleci validate', () => {
   .stdout()
   .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
   .it('runs the circleci validate successfully', ctx => {
-    expect(ctx.stdout).to.contain('context-one')
+    expect(ctx.stdout).to.not.contain('Context "context-one" is missing')
     expect(ctx.stdout).to.not.contain('context-two')
     expect(ctx.stdout).to.contain('Success')
   })
@@ -119,18 +119,15 @@ describe('circleci validate', () => {
   .matchHeader('circle-token', 'pat123')
   .reply(200, {
     next_page_token: 'next-page-token', // eslint-disable-line camelcase
-    items: [{
-      variable: 'AWS_SECRET_KEY_VALUE',
-      context_id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5', // eslint-disable-line camelcase
-      created_at: '2020-10-14T09:16:29.036Z', // eslint-disable-line camelcase
-    }],
+    items: [{variable: 'UNEXPECTED_ENV_VAR'}],
   }),
   )
   .stdout()
   .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
   .it('errors when the validation checks fail', ctx => {
     expect(ctx.stdout).to.contain('Context "context-one" is missing')
-    expect(ctx.stdout).to.not.contain('Context "context-two" is missing')
+    expect(ctx.stdout).to.contain('Environment variable AWS_SECRET_KEY_VALUE is missing from "context-two"')
+    expect(ctx.stdout).to.contain('Environment variable UNEXPECTED_ENV_VAR was not expected in "context-two"')
   })
 
   test

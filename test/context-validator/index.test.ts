@@ -5,7 +5,7 @@ import {
   ContextFailedToValidateResult,
   ContextMissingResult,
   ContextSuccessfullyValidatedResult,
-  MissingEnvVarError,
+  MissingEnvVarError, UnexpectedEnvVarError,
 } from '../../src/context-validator/types'
 import {
   APIFetcher,
@@ -122,6 +122,44 @@ describe('context-validator', () => {
         new ContextFailedToValidateResult(
           'context-one',
           [new MissingEnvVarError('AWS_SECRET_KEY_VALUE')],
+        ),
+      ])
+    })
+
+    it('perform a unsuccessful validation when an unexpected env var is present', () => {
+      const config: Config = {
+        owner: {
+          id: '71362723',
+        },
+        contexts: [
+          {
+            name: 'context-one',
+            purpose: 'Used for ec2 production environment',
+            'environment-variables': {},
+          },
+        ],
+      }
+
+      const getContexts = mockGetContexts({
+        key: config.owner.id,
+        response: [
+          {
+            name: 'context-one',
+            id: '00a9f111-55f6-46b9-8b85-57845802075d',
+          },
+        ],
+      })
+
+      const getContextEnvironmentVariables = mockGetContextsEnvironmentVariables({
+        key: '00a9f111-55f6-46b9-8b85-57845802075d',
+        response: [{variable: 'UNEXPECTED'}],
+      })
+
+      return expect(validateContexts(config, getContexts, getContextEnvironmentVariables)(fetcher))
+      .to.eventually.eql([
+        new ContextFailedToValidateResult(
+          'context-one',
+          [new UnexpectedEnvVarError('UNEXPECTED')],
         ),
       ])
     })

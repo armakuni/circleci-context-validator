@@ -6,7 +6,11 @@ import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
 import {APIFetcher, ApiRequestError, BadApiResponseDataError, createFetcher} from '../../circleci'
 import {validateContexts} from '../../context-validator'
-import {ContextMissingResult, ContextValidatorResult} from '../../context-validator/types'
+import {
+  ContextFailedToValidateResult,
+  ContextMissingResult,
+  ContextValidatorResult, MissingEnvVarError, UnexpectedEnvVarError,
+} from '../../context-validator/types'
 import * as chalk from 'chalk' // eslint-disable-line unicorn/import-style
 
 export default class Validate extends Command {
@@ -45,10 +49,16 @@ export default class Validate extends Command {
     for (const result of results) {
       if (result instanceof ContextMissingResult) {
         this.log(chalk.red(`Context "${result.contextName}" is missing`))
+      } else if (result instanceof ContextFailedToValidateResult) {
+        for (const error of result.errors) {
+          if (error instanceof MissingEnvVarError) {
+            this.log(chalk.red(`Environment variable ${error.envVarName} is missing from "${result.contextName}"`))
+          } else {
+            this.log(chalk.red(`Environment variable ${error.envVarName} was not expected in "${result.contextName}"`))
+          }
+        }
       }
     }
-
-    this.log(JSON.stringify(results))
 
     this.log(chalk.green('Success'))
   }

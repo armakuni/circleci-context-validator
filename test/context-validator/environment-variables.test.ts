@@ -7,7 +7,7 @@ import {
   Validator,
 } from '../../src/context-validator/environment-variables'
 import {ExpectedEnvVarBlock} from '../../src/config/config'
-import {MissingEnvVarError} from '../../src/context-validator/types'
+import {MissingEnvVarError, UnexpectedEnvVarError} from '../../src/context-validator/types'
 import {FetchedEnvVar} from '../../src/circleci/get-context-environment-variables'
 
 describe('context-validator', () => {
@@ -15,6 +15,7 @@ describe('context-validator', () => {
     it('returns MissingEnvVarError when the env var does not exist', () => {
       const envVar: AnalysedEnvVar = {
         exists: false,
+        expected: true,
         labels: [],
         name: 'example_env_var',
         purpose: '',
@@ -23,9 +24,19 @@ describe('context-validator', () => {
       expect(validateSingle(envVar)).to.eql([new MissingEnvVarError('example_env_var')])
     })
 
+    it('returns UnexpectedEnvVarError when the env var was not expected', () => {
+      const envVar: AnalysedEnvVar = {
+        exists: true,
+        expected: false,
+        name: 'example_env_var',
+      }
+      expect(validateSingle(envVar)).to.eql([new UnexpectedEnvVarError('example_env_var')])
+    })
+
     it('returns an empty list when the env var does exist', () => {
       const envVar: AnalysedEnvVar = {
         exists: true,
+        expected: true,
         labels: [],
         name: 'example_env_var',
         purpose: '',
@@ -50,6 +61,7 @@ describe('context-validator', () => {
         [{
           name: 'ENV_VAR1',
           exists: false,
+          expected: true,
           state: 'required',
           purpose: 'example-purpose',
           labels: ['label1', 'label2'],
@@ -63,6 +75,7 @@ describe('context-validator', () => {
         [{
           name: 'ENV_VAR1',
           exists: true,
+          expected: true,
           state: 'required',
           purpose: 'example-purpose',
           labels: ['label1', 'label2'],
@@ -70,15 +83,21 @@ describe('context-validator', () => {
       )
     })
 
-    it('ignores unknown fetched env vars', () => {
+    it('adds unexpected env vars', () => {
       const fetched: FetchedEnvVar[] = [{variable: 'ENV_VAR2'}]
       expect(analyseAll(context)(fetched)).to.eql(
         [{
           name: 'ENV_VAR1',
           exists: false,
+          expected: true,
           state: 'required',
           purpose: 'example-purpose',
           labels: ['label1', 'label2'],
+        },
+        {
+          name: 'ENV_VAR2',
+          exists: true,
+          expected: false,
         }],
       )
     })
@@ -89,6 +108,7 @@ describe('context-validator', () => {
     const analyser: Analyser = fetchedEnvVars => fetchedEnvVars.map(({variable}) => ({
       name: variable,
       exists: false,
+      expected: true,
       state: 'required',
       purpose: 'analysed-purpose',
       labels: ['label1', 'label2'],
