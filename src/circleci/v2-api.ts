@@ -18,6 +18,14 @@ export function mapRequest<A, B>(f: (x: A) => B, request: APIRequest<A>): APIReq
   return (fetcher: APIFetcher): Promise<B> => request(fetcher).then((x: A) => f(x))
 }
 
+export function flatMapRequest<A, B>(f: (x: A) => APIRequest<B>, request: APIRequest<A>): APIRequest<B> {
+  return async (fetcher: APIFetcher): Promise<B> => f(await request(fetcher))(fetcher)
+}
+
+export function sequenceRequest<A>(requests: APIRequest<A>[]): APIRequest<A[]> {
+  return async (fetcher: APIFetcher): Promise<A[]> => Promise.all(requests.map(request => request(fetcher)))
+}
+
 async function request(personalAccessToken: string, path: string): Promise<any> {
   const response = await fetch(`https://circleci.com/api/v2/${path}`, {
     headers: {

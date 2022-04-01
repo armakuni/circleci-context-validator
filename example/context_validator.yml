@@ -21,8 +21,8 @@ contexts:
         labels:  # list of potential ways to group these together
           - tooling
           - aws
-      CONTENT_TOOL_API_KEY: 
-        state: required 
+      CONTENT_TOOL_API_KEY:
+        state: required
         purpose: Enable access to downstream content tool API
         labels:  # list of potential ways to group these together
           - api

@@ -26,6 +26,7 @@ describe('pagination', () => {
         properties: {
           next_page_token: { // eslint-disable-line camelcase
             type: 'string',
+            nullable: true,
           },
           items: {
             type: 'array',
