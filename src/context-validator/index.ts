@@ -1,33 +1,23 @@
-import {APIFetcher, APIRequest, getContextEnvironmentVariables, getContexts} from '../circleci'
+import {APIFetcher, APIRequest, ContextItem, flatMapRequest, getContextEnvironmentVariables, getContexts, mapRequest, sequenceRequest} from '../circleci'
+import {EnvironmentVariable} from '../circleci/get-context-environment-variables'
 import {Config, Context} from '../config/config'
 import {ContextEnvVarMissingResult, ContextEnvVarUnexpectedResult, ContextMissingResult, ContextValidatedResult, ContextValidatorResult} from './types'
 
-export const validateContexts = (config: Config): APIRequest<ContextValidatorResult[]> => {
-  return async (fetcher: APIFetcher) => {
-    const fetchedContexts = await getContexts(config.owner.id)(fetcher)
-    const actualContextNames = new Map(fetchedContexts.map(context => [context.name, context.id]))
+export const validateContexts = (config: Config): APIRequest<ContextValidatorResult[]> =>
+  flatMapRequest(fetchedContexts => validateContextResponse(config, fetchedContexts), getContexts(config.owner.id))
 
-    const results: APIRequest<ContextValidatorResult[]>[] = []
-    for (const context of config.contexts) {
-      if (actualContextNames.has(context.name)) {
-        results.push(processEnvVarsForContext(context, actualContextNames))
-      } else {
-        results.push(missingContextFetcher(context.name))
-      }
-    }
+const validateContextResponse = (config: Config, fetchedContexts: ContextItem[]): APIRequest<ContextValidatorResult[]> => {
+  const actualContextNames = new Map(fetchedContexts.map(context => [context.name, context.id]))
 
-    const promises = results.map(result => result(fetcher))
-    const promiseResults = await Promise.all(promises)
+  const requests: APIRequest<ContextValidatorResult[]>[] = config.contexts.map(context =>
+    actualContextNames.has(context.name) ?
+      processEnvVarsForContext(context, actualContextNames)      :
+      missingContextFetcher(context.name))
 
-    return promiseResults.flat()
-  }
+  return mapRequest((responses: ContextValidatorResult[][]) => responses.flat(), sequenceRequest(requests))
 }
 
-const missingContextFetcher = (contextName: string): APIRequest<ContextValidatorResult[]> => {
-  return async (_fetcher: APIFetcher) => {
-    return [new ContextMissingResult(contextName)]
-  }
-}
+const missingContextFetcher = (contextName: string): APIRequest<ContextValidatorResult[]> => async (_fetcher: APIFetcher) => [new ContextMissingResult(contextName)]
 
 /*
  * Process a context's env vars provided in the context definition config
@@ -36,30 +26,37 @@ const missingContextFetcher = (contextName: string): APIRequest<ContextValidator
  * Determine if the configured env var is optional/required against what is returned against the API
  * Determine if there are additional unexpected env vars returned from the API that are not configured
  */
-const processEnvVarsForContext = (context: Context, actualContextNames: Map<string, string>): APIRequest<ContextValidatorResult[]> => {
-  return async (fetcher: APIFetcher) => {
-    const configEnvVars = Object.keys(context['environment-variables'])
+const processEnvVarsForContext = (context: Context, actualContextNames: Map<string, string>): APIRequest<ContextValidatorResult[]> =>
+  mapRequest(apiEnvVars => processApiValidation(context, apiEnvVars), getContextEnvironmentVariables(actualContextNames.get(context.name) as string))
 
-    const apiEnvVars = await getContextEnvironmentVariables(actualContextNames.get(context.name) as string)(fetcher)
-    const apiEnvVarSet = new Set(apiEnvVars.map(env => env.variable))
+// return async (fetcher: APIFetcher) => {
 
-    const results: ContextValidatorResult[] = []
-    for (const envVarName of configEnvVars) {
-      if (context['environment-variables'][envVarName].state !== 'optional' && !apiEnvVarSet.has(envVarName)) {
-        results.push(new ContextEnvVarMissingResult(context.name, envVarName))
-      }
+//   const apiEnvVars = await getContextEnvironmentVariables(actualContextNames.get(context.name) as string)(fetcher)
+
+//   return processApiValidation(context, apiEnvVars)
+// }
+// }
+
+const processApiValidation = (context: Context, apiEnvVars: EnvironmentVariable[]): ContextValidatorResult[] => {
+  const configEnvVars = Object.keys(context['environment-variables'])
+  const apiEnvVarSet = new Set(apiEnvVars.map(env => env.variable))
+
+  const results: ContextValidatorResult[] = []
+  for (const envVarName of configEnvVars) {
+    if (context['environment-variables'][envVarName].state !== 'optional' && !apiEnvVarSet.has(envVarName)) {
+      results.push(new ContextEnvVarMissingResult(context.name, envVarName))
     }
-
-    for (const envVarName of apiEnvVarSet) {
-      if (!configEnvVars.includes(envVarName)) {
-        results.push(new ContextEnvVarUnexpectedResult(context.name, envVarName))
-      }
-    }
-
-    if (results.length === 0) {
-      results.push(new ContextValidatedResult(context.name))
-    }
-
-    return results
   }
+
+  for (const envVarName of apiEnvVarSet) {
+    if (!configEnvVars.includes(envVarName)) {
+      results.push(new ContextEnvVarUnexpectedResult(context.name, envVarName))
+    }
+  }
+
+  if (results.length === 0) {
+    results.push(new ContextValidatedResult(context.name))
+  }
+
+  return results
 }
