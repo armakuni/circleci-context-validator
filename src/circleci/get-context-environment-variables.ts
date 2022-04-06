@@ -1,6 +1,6 @@
 import * as API from './v2-api'
 import {APIRequest} from './v2-api'
-import {validateWithJsonSchema, Validator} from '../schema-validator'
+import {validateWithJsonSchema, SchemaValidator} from '../schema-validator'
 import {JSONSchemaType} from 'ajv'
 import {PaginatedResponse, paginatedSchema} from './pagination'
 
@@ -25,7 +25,7 @@ const schema: JSONSchemaType<GetContextEnvironmentVariablesResponse> =
 export const getPath =
   (contextId: string): string => `context/${contextId}/environment-variable`
 
-export const validate: Validator<GetContextEnvironmentVariablesResponse> =
+export const validate: SchemaValidator<GetContextEnvironmentVariablesResponse> =
   validateWithJsonSchema(schema)
 
 export const createRequest =

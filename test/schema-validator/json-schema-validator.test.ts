@@ -1,4 +1,4 @@
-import {validateWithJsonSchema, ValidatorError} from '../../src/schema-validator'
+import {validateWithJsonSchema, SchemaValidatorError} from '../../src/schema-validator'
 import {JSONSchemaType} from 'ajv'
 import {expect} from 'chai'
 
@@ -21,7 +21,7 @@ describe('json-schema-validator', () => {
     })
 
     it('throws when the input in invalid', () => {
-      expect(() => validate({})).to.throw(ValidatorError, /must have required property 'message'/)
+      expect(() => validate({})).to.throw(SchemaValidatorError, /must have required property 'message'/)
     })
   })
 })
