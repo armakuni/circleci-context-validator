@@ -1,13 +1,14 @@
 import * as nock from 'nock'
 import {
+  ApiRequestError,
+  BadApiResponseDataError,
   constantResponseRequest,
   createFetcher,
   createRequest,
   sequenceRequest,
 } from '../../src/circleci'
-import {Validator, ValidatorError} from '../../src/schema-validator'
+import {SchemaValidator, SchemaValidatorError} from '../../src/schema-validator'
 import {expect} from 'chai'
-import {ApiRequestError, BadApiResponseDataError} from '../../src/circleci'
 
 describe('v2-api', () => {
   describe('createRequest', () => {
@@ -20,7 +21,7 @@ describe('v2-api', () => {
       .reply(500, {message: 'error'})
 
       // eslint-disable-next-line unicorn/consistent-function-scoping
-      const validateSuccess: Validator<string> = () => 'success'
+      const validateSuccess: SchemaValidator<string> = () => 'success'
 
       return expect(createRequest('example-resource', validateSuccess)(fetcher))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] {"message":"error"}')
@@ -33,8 +34,8 @@ describe('v2-api', () => {
       .reply(200, {})
 
       // eslint-disable-next-line unicorn/consistent-function-scoping
-      const validateFailure: Validator<string> = () => {
-        throw new ValidatorError('failed')
+      const validateFailure: SchemaValidator<string> = () => {
+        throw new SchemaValidatorError('failed')
       }
 
       return expect(createRequest('example-resource', validateFailure)(fetcher))
@@ -47,7 +48,7 @@ describe('v2-api', () => {
       .matchHeader('circle-token', 'access-token')
       .reply(200, {})
 
-      const validateFailure: Validator<string> = () => {
+      const validateFailure: SchemaValidator<string> = () => {
         throw new Error('not a validate error')
       }
 
@@ -62,7 +63,7 @@ describe('v2-api', () => {
       .reply(200, {message: 'hello'})
 
       // eslint-disable-next-line unicorn/consistent-function-scoping
-      const messageValidator: Validator<{message: string}> = (input: any) => input
+      const messageValidator: SchemaValidator<{message: string}> = (input: any) => input
 
       return expect(createRequest('example-resource', messageValidator)(fetcher))
       .to.eventually.eql({message: 'hello'})

@@ -5,7 +5,7 @@ import {
   getPath,
   validate,
 } from '../../src/circleci/get-context-environment-variables'
-import {ValidatorError} from '../../src/schema-validator'
+import {SchemaValidatorError} from '../../src/schema-validator'
 import {APIFetcher} from '../../src/circleci/v2-api'
 import {BadApiResponseDataError} from '../../src/circleci'
 
@@ -40,13 +40,13 @@ describe('get-context-environment-variables', () => {
     it('throws when items is missing', () => {
       delete response.items
       expect(() => validate(response))
-      .to.throw(ValidatorError, /must have required property 'items'/)
+      .to.throw(SchemaValidatorError, /must have required property 'items'/)
     })
 
     it('throws when variable is missing from a context', () => {
       delete response.items[0].variable
       expect(() => validate(response))
-      .to.throw(ValidatorError, /must have required property 'variable'/)
+      .to.throw(SchemaValidatorError, /must have required property 'variable'/)
     })
 
     it('returns the response', () => {

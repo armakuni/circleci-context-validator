@@ -1,4 +1,4 @@
-import {validateWithJsonSchema, Validator} from '../schema-validator'
+import {validateWithJsonSchema, SchemaValidator} from '../schema-validator'
 import {JSONSchemaType} from 'ajv'
 import * as API from './v2-api'
 import {APIRequest} from './v2-api'
@@ -29,7 +29,7 @@ const schema: JSONSchemaType<GetContextsResponse> =
 export const getPath =
   (ownerId: string): string => `context?owner-id=${ownerId}`
 
-export const validate: Validator<GetContextsResponse> =
+export const validate: SchemaValidator<GetContextsResponse> =
   validateWithJsonSchema(schema)
 
 export const createRequest =

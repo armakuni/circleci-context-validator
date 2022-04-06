@@ -1,3 +1,3 @@
-export type Validator<T> = (response: any) => T
+export type SchemaValidator<T> = (response: any) => T
 
-export class ValidatorError extends Error {}
+export class SchemaValidatorError extends Error {}

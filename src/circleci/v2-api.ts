@@ -1,4 +1,4 @@
-import {Validator, ValidatorError} from '../schema-validator'
+import {SchemaValidator, SchemaValidatorError} from '../schema-validator'
 import fetch from 'node-fetch'
 import {ApiRequestError, BadApiResponseDataError} from './types'
 
@@ -23,7 +23,7 @@ export namespace APIRequest {
     })
 }
 
-export function createRequest<Response>(path: string, validate: Validator<Response>): APIRequest<Response> {
+export function createRequest<Response>(path: string, validate: SchemaValidator<Response>): APIRequest<Response> {
   return APIRequest.create(async (fetcher: APIFetcher) => validateResponse(validate, await fetcher(path)))
 }
 
@@ -61,11 +61,11 @@ async function request(personalAccessToken: string, path: string): Promise<any> 
   return response.json()
 }
 
-function validateResponse<Response>(validate: Validator<Response>, body: any): Response {
+function validateResponse<Response>(validate: SchemaValidator<Response>, body: any): Response {
   try {
     return validate(body)
   } catch (error) {
-    if (!(error instanceof ValidatorError)) {
+    if (!(error instanceof SchemaValidatorError)) {
       throw error
     }
 
