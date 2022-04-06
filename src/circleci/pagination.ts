@@ -36,7 +36,7 @@ const withPageToken = (pagedToken: string): (fetcher: APIFetcher) => APIFetcher 
 
 export const  paginatedRequest = <Item>(request: APIRequest<PaginatedResponse<Item>>): APIRequest<Item[]> =>
   request.flatMap(response => response.next_page_token ?
-    makeNextPageRequest(request, response)    :
+    makeNextPageRequest(request, response) :
     constantResponseRequest(response.items))
 
 const makeNextPageRequest = <Item>(request: APIRequest<PaginatedResponse<Item>>, response: PaginatedResponse<Item>): APIRequest<Item[]> =>
