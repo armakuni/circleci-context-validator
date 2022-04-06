@@ -1,5 +1,5 @@
 import {Config} from './config'
 import {schema} from './schema'
-import {validateWithJsonSchema, Validator} from '../schema-validator'
+import {validateWithJsonSchema, SchemaValidator} from '../schema-validator'
 
-export const validateConfig: Validator<Config> = validateWithJsonSchema(schema)
+export const validateConfig: SchemaValidator<Config> = validateWithJsonSchema(schema)
