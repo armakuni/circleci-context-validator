@@ -17,7 +17,7 @@ describe('get-contexts', () => {
 
     beforeEach(() => {
       response = {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
+        next_page_token: null, // eslint-disable-line camelcase
         items: [{
           name: 'context-one',
           id: '00a9f111-55f6-46b9-8b85-57845802075d',
@@ -55,7 +55,7 @@ describe('get-contexts', () => {
 
   describe('createRequests', () => {
     const response = {
-      next_page_token: 'next-page-token', // eslint-disable-line camelcase
+      next_page_token: null, // eslint-disable-line camelcase
       items: [{
         name: 'context-one',
         id: '00a9f111-55f6-46b9-8b85-57845802075d',

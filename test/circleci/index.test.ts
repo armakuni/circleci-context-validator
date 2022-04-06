@@ -41,7 +41,7 @@ describe('circleci', () => {
     it('returns the list of contexts', () => {
       mockRequest
       .reply(200,     {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
+        next_page_token: null, // eslint-disable-line camelcase
         items: [{
           name: 'context-one',
           id: '00a9f111-55f6-46b9-8b85-57845802075d',
@@ -98,7 +98,7 @@ describe('circleci', () => {
     it('returns the list of contexts', () => {
       mockRequest
       .reply(200,     {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
+        next_page_token: null, // eslint-disable-line camelcase
         items: [{
           variable: 'SECRET_ONE',
           context_id: contextId, // eslint-disable-line camelcase

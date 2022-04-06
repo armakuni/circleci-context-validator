@@ -24,7 +24,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context', params: {'owner-id': '71362723'}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [{
               name: 'context-one',
               id: '00a9f111-55f6-46b9-8b85-57845802075d',
@@ -38,7 +38,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable', params: {}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [],
           }},
       ])
@@ -70,7 +70,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context', params: {'owner-id': '71362723'}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [{
               name: 'context-one',
               id: '00a9f111-55f6-46b9-8b85-57845802075d',
@@ -80,7 +80,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable', params: {}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [],
           }},
       ])
@@ -112,7 +112,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context', params: {'owner-id': '71362723'}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [],
           }},
       ])
@@ -149,7 +149,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context', params: {'owner-id': '71362723'}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [{
               name: 'context-one',
               id: '00a9f111-55f6-46b9-8b85-57845802075d',
@@ -159,7 +159,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable', params: {}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [{
               variable: 'AWS_SECRET_KEY_VALUE',
               context_id: '00a9f111-55f6-46b9-8b85-57845802075d', // eslint-disable-line camelcase
@@ -195,7 +195,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context', params: {'owner-id': '71362723'}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [{
               name: 'context-one',
               id: '00a9f111-55f6-46b9-8b85-57845802075d',
@@ -205,7 +205,7 @@ describe('context-validator', () => {
         {
           requestParams: {path: 'context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable', params: {}},
           response: {
-            next_page_token: 'next-page-token', // eslint-disable-line camelcase
+            next_page_token: null, // eslint-disable-line camelcase
             items: [{
               variable: 'AWS_SECRET_KEY_VALUE',
               context_id: '00a9f111-55f6-46b9-8b85-57845802075d', // eslint-disable-line camelcase

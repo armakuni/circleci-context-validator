@@ -24,7 +24,7 @@ describe('get-context-environment-variables', () => {
 
     beforeEach(() => {
       response = {
-        next_page_token: 'next-page-token', // eslint-disable-line camelcase
+        next_page_token: null, // eslint-disable-line camelcase
         items: [{
           variable: 'SECRET_ONE',
           context_id: contextId, // eslint-disable-line camelcase
@@ -57,7 +57,7 @@ describe('get-context-environment-variables', () => {
   describe('createRequest', () => {
     const contextId = '68c76415-c1a4-44b8-b205-f4ede7ea6d68'
     const response = {
-      next_page_token: 'next-page-token', // eslint-disable-line camelcase
+      next_page_token: null, // eslint-disable-line camelcase
       items: [{
         variable: 'SECRET_ONE',
         context_id: contextId, // eslint-disable-line camelcase
