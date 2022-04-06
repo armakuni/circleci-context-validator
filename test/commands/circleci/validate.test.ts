@@ -32,7 +32,7 @@ describe('circleci validate', () => {
   .matchHeader('circle-token', 'pat123')
   .reply(200,
     {
-      next_page_token: 'next-page-token', // eslint-disable-line camelcase
+      next_page_token: null, // eslint-disable-line camelcase
       items: [{
         name: 'context-one',
         id: '00a9f111-55f6-46b9-8b85-57845802075d',
@@ -49,7 +49,7 @@ describe('circleci validate', () => {
   .get('/api/v2/context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable')
   .matchHeader('circle-token', 'pat123')
   .reply(200, {
-    next_page_token: 'next-page-token', // eslint-disable-line camelcase
+    next_page_token: null, // eslint-disable-line camelcase
     items: [{
       variable: 'AWS_SECRET_KEY_VALUE',
       context_id: '00a9f111-55f6-46b9-8b85-57845802075d', // eslint-disable-line camelcase
@@ -105,7 +105,7 @@ describe('circleci validate', () => {
   .matchHeader('circle-token', 'pat123')
   .reply(200,
     {
-      next_page_token: 'next-page-token', // eslint-disable-line camelcase
+      next_page_token: null, // eslint-disable-line camelcase
       items: [{
         name: 'context-two',
         id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5',
@@ -118,7 +118,7 @@ describe('circleci validate', () => {
   .get('/api/v2/context/222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5/environment-variable')
   .matchHeader('circle-token', 'pat123')
   .reply(200, {
-    next_page_token: 'next-page-token', // eslint-disable-line camelcase
+    next_page_token: null, // eslint-disable-line camelcase
     items: [{
       variable: 'AWS_SECRET_KEY_VALUE',
       context_id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5', // eslint-disable-line camelcase

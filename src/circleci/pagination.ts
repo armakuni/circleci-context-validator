@@ -1,4 +1,5 @@
 import {JSONSchemaType} from 'ajv'
+import {APIFetcher, APIRequest, constantResponseRequest} from './v2-api'
 
 export interface PaginatedResponse<Item> {
   // eslint-disable-next-line camelcase
@@ -23,3 +24,24 @@ export function paginatedSchema<Item>(itemSchema: JSONSchemaType<Item>): JSONSch
     },
   }
 }
+
+function withPageToken(pagedToken: string): (fetcher: APIFetcher) => APIFetcher {
+  return fetcher => {
+    return requestParams => {
+      const newParams = {...requestParams}
+      newParams.params['page-token'] = pagedToken
+
+      return fetcher(newParams)
+    }
+  }
+}
+
+export const  paginatedRequest = <Item>(request: APIRequest<PaginatedResponse<Item>>): APIRequest<Item[]> =>
+  request.flatMap(response => response.next_page_token ?
+    makeNextPageRequest(request, response)    :
+    constantResponseRequest(response.items))
+
+const makeNextPageRequest = <Item>(request: APIRequest<PaginatedResponse<Item>>, response: PaginatedResponse<Item>): APIRequest<Item[]> =>
+  paginatedRequest(request.mapFetcher(withPageToken(response.next_page_token as string)))
+  .map(items => [...response.items, ...items])
+

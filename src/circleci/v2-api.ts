@@ -20,6 +20,7 @@ type APIRequestFunc<Response> = (fetcher: APIFetcher) => Promise<Response>
 export interface APIRequest<Response> extends APIRequestFunc<Response> {
   map<NewResponse>(f: (x: Response) => NewResponse): APIRequest<NewResponse>
   flatMap<NewResponse>(f: (a: Response) => APIRequest<NewResponse>): APIRequest<NewResponse>
+  mapFetcher(f: (x: APIFetcher) => APIFetcher): APIRequest<Response>
 }
 
 export namespace APIRequest {
@@ -30,6 +31,9 @@ export namespace APIRequest {
       },
       map<NewResponse>(f: (x: Response) => NewResponse): APIRequest<NewResponse> {
         return create(mapRequest(f, action))
+      },
+      mapFetcher(f: (x: APIFetcher) => APIFetcher): APIRequest<Response> {
+        return create((fetcher: APIFetcher) => action(f(fetcher)))
       },
     })
 }
@@ -59,9 +63,12 @@ export function sequenceRequest<A>(requests: APIRequest<A>[]): APIRequest<A[]> {
 }
 
 async function request(personalAccessToken: string, requestParams: RequestParams): Promise<any> {
-  const query = Object.entries(requestParams.params).map(([key, value]) => `${key}=${value}`).join('&')
+  const query = Object.entries(requestParams.params).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')
 
-  const response = await fetch(`https://circleci.com/api/v2/${requestParams.path}${query ? '?' + query : ''}`, {
+  const url = `https://circleci.com/api/v2/${requestParams.path}${query ? '?' + query : ''}`
+  console.log('request', url, JSON.stringify(requestParams))
+
+  const response = await fetch(url, {
     headers: {
       'Circle-Token': personalAccessToken,
     },

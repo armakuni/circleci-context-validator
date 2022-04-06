@@ -5,7 +5,6 @@ import {APIFetcher, ApiRequestError, RequestParams} from '../../src/circleci'
  * @param responses mocked output to return based on a URI path existence
  * @returns mocked output or api error
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const mockFetcher = (responses: {requestParams: RequestParams, response: any}[]): APIFetcher => {
   return (requestParams: RequestParams) => {
     for (const res of responses) {

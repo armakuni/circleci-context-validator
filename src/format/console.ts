@@ -1,6 +1,5 @@
 import * as chalk from 'chalk' // eslint-disable-line unicorn/import-style
 import {ContextEnvVarMissingResult, ContextEnvVarUnexpectedResult, ContextMissingResult, ContextValidatedResult, ContextValidatorResult} from '../context-validator/types'
-import {groupBy} from '../lib/util'
 
 export const formatResult = (results: ContextValidatorResult[]): void => {
   let fail = 0
@@ -19,5 +18,5 @@ export const formatResult = (results: ContextValidatorResult[]): void => {
     }
   }
 
-  console.log(!fail ? chalk.green('Success') : chalk.red(`Failures ${fail}`))
+  console.log(fail ? chalk.red(`Failures ${fail}`) : chalk.green('Success'))
 }
