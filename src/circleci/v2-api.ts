@@ -23,6 +23,12 @@ export interface APIRequest<Response> extends APIRequestFunc<Response> {
   mapFetcher(f: (x: APIFetcher) => APIFetcher): APIRequest<Response>
 }
 
+const mapRequest: <A, B>(f: (_: A) => B, _: APIRequestFunc<A>) => APIRequestFunc<B> =
+  (f, request) => fetcher => request(fetcher).then(x => f(x))
+
+const flatMapRequest: <A, B>(f: (x: A) => APIRequestFunc<B>, _: APIRequestFunc<A>) => APIRequestFunc<B> =
+  (f, request) => async fetcher => f(await request(fetcher))(fetcher)
+
 export namespace APIRequest {
   export const create: <Response>(action: APIRequestFunc<Response>) => APIRequest<Response> =
     <Response>(action: APIRequestFunc<Response>) => Object.assign(action, {
@@ -38,29 +44,21 @@ export namespace APIRequest {
     })
 }
 
-export function createRequest<Response>(requestParams: RequestParams, validate: SchemaValidator<Response>): APIRequest<Response> {
-  return APIRequest.create(async (fetcher: APIFetcher) => validateResponse(validate, await fetcher(requestParams)))
-}
+export const createRequest: <Response>(rp: RequestParams, v: SchemaValidator<Response>) => APIRequest<Response> =
+  (requestParams, validate) =>
+    APIRequest.create(async (fetcher: APIFetcher) => validateResponse(validate, await fetcher(requestParams)))
 
-export function createFetcher(personalAccessToken: string): APIFetcher {
-  return (requestParams: RequestParams) => request(personalAccessToken, requestParams)
-}
+export const createFetcher: (_: string) => APIFetcher =
+  personalAccessToken => requestParams =>
+    request(personalAccessToken, requestParams)
 
 export const constantResponseRequest: <Response>(_: Response) => APIRequest<Response> =
   response =>
-    APIRequest.create(async (_fetcher: APIFetcher) => response)
+    APIRequest.create(async _fetcher => response)
 
-export function mapRequest<A, B>(f: (x: A) => B, request: APIRequestFunc<A>): APIRequestFunc<B> {
-  return (fetcher: APIFetcher): Promise<B> => request(fetcher).then((x: A) => f(x))
-}
-
-export function flatMapRequest<A, B>(f: (x: A) => APIRequestFunc<B>, request: APIRequestFunc<A>): APIRequestFunc<B> {
-  return async (fetcher: APIFetcher): Promise<B> => f(await request(fetcher))(fetcher)
-}
-
-export function sequenceRequest<A>(requests: APIRequest<A>[]): APIRequest<A[]> {
-  return APIRequest.create(async (fetcher: APIFetcher): Promise<A[]> => Promise.all(requests.map(request => request(fetcher))))
-}
+export const sequenceRequest: <A>(_: APIRequest<A>[]) => APIRequest<A[]> =
+  requests =>
+    APIRequest.create(async fetcher => Promise.all(requests.map(request => request(fetcher))))
 
 async function request(personalAccessToken: string, requestParams: RequestParams): Promise<any> {
   const query = Object.entries(requestParams.params).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')

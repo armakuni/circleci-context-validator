@@ -22,18 +22,11 @@ const schema: JSONSchemaType<GetContextEnvironmentVariablesResponse> =
     },
   })
 
-export const getRequestParams =
-  (contextId: string): RequestParams => ({
-    path: `context/${contextId}/environment-variable`,
-    params: {},
-  })
+export const getRequestParams = (contextId: string): RequestParams =>
+  ({path: `context/${contextId}/environment-variable`, params: {}})
 
 export const validate: SchemaValidator<GetContextEnvironmentVariablesResponse> =
   validateWithJsonSchema(schema)
 
-export const createRequest =
-  (contextId: string): APIRequest<GetContextEnvironmentVariablesResponse> =>
-    API.createRequest(
-      getRequestParams(contextId),
-      validate,
-    )
+export const createRequest = (contextId: string): APIRequest<GetContextEnvironmentVariablesResponse> =>
+  API.createRequest(getRequestParams(contextId), validate)
