@@ -1,4 +1,4 @@
-import {APIFetcher, ApiRequestError} from '../../src/circleci'
+import {APIFetcher, ApiRequestError, RequestParams} from '../../src/circleci'
 
 /**
  * Mock version of APIFetcher for returning pre-canned known responses based on a URI path
@@ -6,11 +6,12 @@ import {APIFetcher, ApiRequestError} from '../../src/circleci'
  * @returns mocked output or api error
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const mockFetcher = (responses: any): APIFetcher => {
-  const mappedResponses = new Map(Object.entries(responses))
-  return (path: string) => {
-    if (mappedResponses.has(path)) {
-      return Promise.resolve(mappedResponses.get(path))
+export const mockFetcher = (responses: {requestParams: RequestParams, response: any}[]): APIFetcher => {
+  return (requestParams: RequestParams) => {
+    for (const res of responses) {
+      if (RequestParams.equal(requestParams, res.requestParams)) {
+        return Promise.resolve(res.response)
+      }
     }
 
     throw new ApiRequestError('failed to find response with path')

@@ -2,7 +2,18 @@ import {SchemaValidator, SchemaValidatorError} from '../schema-validator'
 import fetch from 'node-fetch'
 import {ApiRequestError, BadApiResponseDataError} from './types'
 
-export type APIFetcher = (path: string) => Promise<any>
+export interface RequestParams {
+  path: string
+  params: {[key: string]: string}
+}
+
+export namespace RequestParams {
+  export function equal(requestParam1: RequestParams, requestParam2: RequestParams): boolean {
+    return JSON.stringify(requestParam1) ===  JSON.stringify(requestParam2)
+  }
+}
+
+export type APIFetcher = (requestParams: RequestParams) => Promise<any>
 
 type APIRequestFunc<Response> = (fetcher: APIFetcher) => Promise<Response>
 
@@ -23,12 +34,12 @@ export namespace APIRequest {
     })
 }
 
-export function createRequest<Response>(path: string, validate: SchemaValidator<Response>): APIRequest<Response> {
-  return APIRequest.create(async (fetcher: APIFetcher) => validateResponse(validate, await fetcher(path)))
+export function createRequest<Response>(requestParams: RequestParams, validate: SchemaValidator<Response>): APIRequest<Response> {
+  return APIRequest.create(async (fetcher: APIFetcher) => validateResponse(validate, await fetcher(requestParams)))
 }
 
 export function createFetcher(personalAccessToken: string): APIFetcher {
-  return (path: string) => request(personalAccessToken, path)
+  return (requestParams: RequestParams) => request(personalAccessToken, requestParams)
 }
 
 export const constantResponseRequest: <Response>(_: Response) => APIRequest<Response> =
@@ -47,8 +58,10 @@ export function sequenceRequest<A>(requests: APIRequest<A>[]): APIRequest<A[]> {
   return APIRequest.create(async (fetcher: APIFetcher): Promise<A[]> => Promise.all(requests.map(request => request(fetcher))))
 }
 
-async function request(personalAccessToken: string, path: string): Promise<any> {
-  const response = await fetch(`https://circleci.com/api/v2/${path}`, {
+async function request(personalAccessToken: string, requestParams: RequestParams): Promise<any> {
+  const query = Object.entries(requestParams.params).map(([key, value]) => `${key}=${value}`).join('&')
+
+  const response = await fetch(`https://circleci.com/api/v2/${requestParams.path}${query ? '?' + query : ''}`, {
     headers: {
       'Circle-Token': personalAccessToken,
     },

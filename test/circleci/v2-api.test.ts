@@ -23,7 +23,7 @@ describe('v2-api', () => {
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const validateSuccess: SchemaValidator<string> = () => 'success'
 
-      return expect(createRequest('example-resource', validateSuccess)(fetcher))
+      return expect(createRequest({path: 'example-resource', params: {}}, validateSuccess)(fetcher))
       .to.be.rejectedWith(ApiRequestError, 'Failed to make request to CircleCI API: [500] {"message":"error"}')
     })
 
@@ -38,7 +38,7 @@ describe('v2-api', () => {
         throw new SchemaValidatorError('failed')
       }
 
-      return expect(createRequest('example-resource', validateFailure)(fetcher))
+      return expect(createRequest({path: 'example-resource', params: {}}, validateFailure)(fetcher))
       .to.be.rejectedWith(BadApiResponseDataError, 'failed')
     })
 
@@ -52,7 +52,7 @@ describe('v2-api', () => {
         throw new Error('not a validate error')
       }
 
-      return expect(createRequest('example-resource', validateFailure)(fetcher))
+      return expect(createRequest({path: 'example-resource', params: {}}, validateFailure)(fetcher))
       .to.be.rejectedWith(Error, 'not a validate error')
     })
 
@@ -65,7 +65,7 @@ describe('v2-api', () => {
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const messageValidator: SchemaValidator<{message: string}> = (input: any) => input
 
-      return expect(createRequest('example-resource', messageValidator)(fetcher))
+      return expect(createRequest({path: 'example-resource', params: {}}, messageValidator)(fetcher))
       .to.eventually.eql({message: 'hello'})
     })
   })

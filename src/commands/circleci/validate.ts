@@ -5,8 +5,8 @@ import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
 import {APIFetcher, ApiRequestError, BadApiResponseDataError, createFetcher} from '../../circleci'
 import {validateContexts} from '../../context-validator'
-import {ContextMissingResult, ContextValidatorResult} from '../../context-validator/types'
-import * as chalk from 'chalk' // eslint-disable-line unicorn/import-style
+import {ContextValidatorResult} from '../../context-validator/types'
+import {formatResult} from '../../format/console'
 
 export default class Validate extends Command {
   public static description = 'Validate that CircleCI contexts have required values.';
@@ -31,6 +31,8 @@ export default class Validate extends Command {
    * - Collect contexts provided in config yaml from circle api
    * - Determine valid and missing contexts
    * - Process valid context retrieve env vars associated
+   * todo pagination for contexts, currently limited to first page
+   * todo output results in user friendly fashion
    */
   public async run(): Promise<void> {
     const {flags} = await this.parse(Validate)
@@ -41,15 +43,7 @@ export default class Validate extends Command {
 
     const results = await this.validateCircleCIContexts(config, fetcher)
 
-    for (const result of results) {
-      if (result instanceof ContextMissingResult) {
-        this.log(chalk.red(`Context "${result.contextName}" is missing`))
-      }
-    }
-
-    this.log(JSON.stringify(results))
-
-    this.log(chalk.green('Success'))
+    formatResult(results)
   }
 
   private static async loadConfig(configPath: string) {
