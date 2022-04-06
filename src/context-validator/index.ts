@@ -53,27 +53,20 @@ const processEnvVarsForContext: (_: Context, actualContextNames: Map<string, str
 /*
  * A Context is only considered a valid result if all expected configured env vars are present and no extra from the api
  */
-const processApiValidation: (context: Context, apiEnvVars: EnvironmentVariable[]) => ContextValidatorResult[] =
+const processApiValidation: (_: Context, apiEnvVars: EnvironmentVariable[]) => ContextValidatorResult[] =
   (context, apiEnvVars) => {
     const configEnvVars = Object.keys(context['environment-variables'])
     const apiEnvVarSet = new Set(apiEnvVars.map(env => env.variable))
 
-    const results: ContextValidatorResult[] = []
-    for (const envVarName of configEnvVars) {
-      if (context['environment-variables'][envVarName].state !== 'optional' && !apiEnvVarSet.has(envVarName)) {
-        results.push(new ContextEnvVarMissingResult(context.name, envVarName))
-      }
-    }
+    const missingEnvVars = configEnvVars
+    .filter(envVarName => context['environment-variables'][envVarName].state !== 'optional' && !apiEnvVarSet.has(envVarName))
+    .map(envVarName => new ContextEnvVarMissingResult(context.name, envVarName))
 
-    for (const envVarName of apiEnvVarSet) {
-      if (!configEnvVars.includes(envVarName)) {
-        results.push(new ContextEnvVarUnexpectedResult(context.name, envVarName))
-      }
-    }
+    const unexpectedEnvVars = [...apiEnvVarSet]
+    .filter(envVarName => !configEnvVars.includes(envVarName))
+    .map(envVarName => new ContextEnvVarUnexpectedResult(context.name, envVarName))
 
-    if (results.length === 0) {
-      results.push(new ContextValidatedResult(context.name))
-    }
+    const results = [...missingEnvVars, ...unexpectedEnvVars]
 
-    return results
+    return results.length > 0 ? results : [new ContextValidatedResult(context.name)]
   }
