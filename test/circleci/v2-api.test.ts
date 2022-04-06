@@ -1,5 +1,10 @@
 import * as nock from 'nock'
-import {createFetcher, createRequest, mapRequest} from '../../src/circleci/v2-api'
+import {
+  constantResponseRequest,
+  createFetcher,
+  createRequest,
+  sequenceRequest,
+} from '../../src/circleci'
 import {Validator, ValidatorError} from '../../src/schema-validator'
 import {expect} from 'chai'
 import {ApiRequestError, BadApiResponseDataError} from '../../src/circleci'
@@ -64,15 +69,32 @@ describe('v2-api', () => {
     })
   })
 
-  describe('mapRequest', () => {
-    it('maps the result', () => {
-      // eslint-disable-next-line unicorn/consistent-function-scoping
-      const fetcher = () => Promise.resolve('result')
-      // eslint-disable-next-line unicorn/consistent-function-scoping
-      const validator = (x: string) => `validated ${x}`
-      const request = createRequest('abc', validator)
-      const response = mapRequest(x => `mapped ${x}`, request)(fetcher)
-      return expect(response).to.eventually.eql('mapped validated result')
+  // eslint-disable-next-line unicorn/consistent-function-scoping
+  const fetcher = () => Promise.resolve('')
+
+  describe('.map', () => {
+    it('maps the response', () => {
+      const request = constantResponseRequest('response')
+      const response = request.map(x => `mapped ${x}`)(fetcher)
+      return expect(response).to.eventually.eql('mapped response')
+    })
+  })
+
+  describe('.flatMap', () => {
+    it('flatMaps the response', () => {
+      const request = constantResponseRequest('response')
+      const f = (response: string) => constantResponseRequest(`flatMapped ${response}`)
+      const response = request.flatMap(element => f(element))(fetcher)
+      return expect(response).to.eventually.eql('flatMapped response')
+    })
+  })
+
+  describe('sequenceRequest', () => {
+    it('creates a fetch which lists all reponses', () => {
+      const request1 = constantResponseRequest('response1')
+      const request2 = constantResponseRequest('response2')
+      const response = sequenceRequest([request1, request2])(fetcher)
+      return expect(response).to.eventually.eql(['response1', 'response2'])
     })
   })
 })
