@@ -1,5 +1,5 @@
 import * as API from './v2-api'
-import {APIRequest} from './v2-api'
+import {APIRequest, RequestParams} from './v2-api'
 import {validateWithJsonSchema, SchemaValidator} from '../schema-validator'
 import {JSONSchemaType} from 'ajv'
 import {PaginatedResponse, paginatedSchema} from './pagination'
@@ -22,8 +22,11 @@ const schema: JSONSchemaType<GetContextEnvironmentVariablesResponse> =
     },
   })
 
-export const getPath =
-  (contextId: string): string => `context/${contextId}/environment-variable`
+export const getRequestParams =
+  (contextId: string): RequestParams => ({
+    path: `context/${contextId}/environment-variable`,
+    params: {},
+  })
 
 export const validate: SchemaValidator<GetContextEnvironmentVariablesResponse> =
   validateWithJsonSchema(schema)
@@ -31,6 +34,6 @@ export const validate: SchemaValidator<GetContextEnvironmentVariablesResponse> =
 export const createRequest =
   (contextId: string): APIRequest<GetContextEnvironmentVariablesResponse> =>
     API.createRequest(
-      getPath(contextId),
+      getRequestParams(contextId),
       validate,
     )

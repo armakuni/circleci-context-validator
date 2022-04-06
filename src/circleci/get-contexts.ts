@@ -1,7 +1,7 @@
 import {validateWithJsonSchema, SchemaValidator} from '../schema-validator'
 import {JSONSchemaType} from 'ajv'
 import * as API from './v2-api'
-import {APIRequest} from './v2-api'
+import {APIRequest, RequestParams} from './v2-api'
 import {PaginatedResponse, paginatedSchema} from './pagination'
 
 export type GetContextsResponse = PaginatedResponse<ContextItem>
@@ -27,7 +27,10 @@ const schema: JSONSchemaType<GetContextsResponse> =
   })
 
 export const getPath =
-  (ownerId: string): string => `context?owner-id=${ownerId}`
+  (ownerId: string): RequestParams => ({
+    path: 'context',
+    params: {'owner-id': ownerId},
+  })
 
 export const validate: SchemaValidator<GetContextsResponse> =
   validateWithJsonSchema(schema)

@@ -2,18 +2,18 @@ import {describe} from 'mocha'
 import {expect} from 'chai'
 import {
   createRequest,
-  getPath,
+  getRequestParams,
   validate,
 } from '../../src/circleci/get-context-environment-variables'
 import {SchemaValidatorError} from '../../src/schema-validator'
-import {APIFetcher} from '../../src/circleci/v2-api'
+import {APIFetcher, RequestParams} from '../../src/circleci/v2-api'
 import {BadApiResponseDataError} from '../../src/circleci'
 
 describe('get-context-environment-variables', () => {
   describe('getPath', () => {
     it('returns the path with the context variable', () => {
       const contextId = 'ff2b03cd-c4eb-48f1-8892-c83074b90e6d'
-      expect(getPath(contextId)).to.eql(`context/${contextId}/environment-variable`)
+      expect(getRequestParams(contextId)).to.eql({path: `context/${contextId}/environment-variable`, params: {}})
     })
   })
 
@@ -65,10 +65,10 @@ describe('get-context-environment-variables', () => {
       }],
     }
 
-    const fetcher: APIFetcher = (path: string) => {
-      const expectedPath = getPath(contextId)
-      if (path !== expectedPath) {
-        throw new BadApiResponseDataError(`${path} != ${expectedPath}`)
+    const fetcher: APIFetcher = (requestParams: RequestParams) => {
+      const expectedParams = getRequestParams(contextId)
+      if (JSON.stringify(requestParams) !== JSON.stringify(expectedParams)) {
+        throw new BadApiResponseDataError(`${JSON.stringify(requestParams)} !== ${JSON.stringify(expectedParams)}`)
       }
 
       return Promise.resolve(response)

@@ -45,14 +45,9 @@ const processEnvVarsForContext = (context: Context, actualContextNames: Map<stri
   getContextEnvironmentVariables(actualContextNames.get(context.name) as string)
   .map(apiEnvVars => processApiValidation(context, apiEnvVars))
 
-// return async (fetcher: APIFetcher) => {
-
-//   const apiEnvVars = await getContextEnvironmentVariables(actualContextNames.get(context.name) as string)(fetcher)
-
-//   return processApiValidation(context, apiEnvVars)
-// }
-// }
-
+/*
+ * A Context is only considered a valid result if all expected configured env vars are present and no extra from the api
+ */
 const processApiValidation = (context: Context, apiEnvVars: EnvironmentVariable[]): ContextValidatorResult[] => {
   const configEnvVars = Object.keys(context['environment-variables'])
   const apiEnvVarSet = new Set(apiEnvVars.map(env => env.variable))

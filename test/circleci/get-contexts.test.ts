@@ -2,13 +2,13 @@ import {describe} from 'mocha'
 import {createRequest, getPath, validate} from '../../src/circleci/get-contexts'
 import {expect} from 'chai'
 import {SchemaValidatorError} from '../../src/schema-validator'
-import {APIFetcher} from '../../src/circleci/v2-api'
+import {APIFetcher, RequestParams} from '../../src/circleci/v2-api'
 import {BadApiResponseDataError} from '../../src/circleci'
 
 describe('get-contexts', () => {
   describe('getPath', () => {
     it('returns the path with the owner id', () => {
-      expect(getPath('abc-123')).to.eql('context?owner-id=abc-123')
+      expect(getPath('abc-123')).to.eql({path: 'context', params: {'owner-id': 'abc-123'}})
     })
   })
 
@@ -63,10 +63,10 @@ describe('get-contexts', () => {
       }],
     }
 
-    const fetcher: APIFetcher = (path: string) => {
-      const expectedPath = getPath('example-owner-id')
-      if (path !== expectedPath) {
-        throw new BadApiResponseDataError(`${path} != ${expectedPath}`)
+    const fetcher: APIFetcher = (requestParams: RequestParams) => {
+      const expectedParams = getPath('example-owner-id')
+      if (JSON.stringify(requestParams) !== JSON.stringify(expectedParams)) {
+        throw new BadApiResponseDataError(`${requestParams} != ${expectedParams}`)
       }
 
       return Promise.resolve(response)
