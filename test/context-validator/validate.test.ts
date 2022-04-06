@@ -6,7 +6,6 @@ import {mockFetcher} from '../helpers/mock-api'
 
 describe('context-validator', () => {
   describe('validate', () => {
-
     it('perform a successful validation', () => {
       const config: Config = {
         owner: {
