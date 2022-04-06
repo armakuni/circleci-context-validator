@@ -25,11 +25,11 @@ export function paginatedSchema<Item>(itemSchema: JSONSchemaType<Item>): JSONSch
   }
 }
 
-const withPageToken = (pagedToken: string): (fetcher: APIFetcher) => APIFetcher =>
+const withPageToken = (pageToken: string): (fetcher: APIFetcher) => APIFetcher =>
   fetcher =>
     requestParams => {
       const newParams = {...requestParams}
-      newParams.params['page-token'] = pagedToken
+      newParams.params['page-token'] = pageToken
 
       return fetcher(newParams)
     }
