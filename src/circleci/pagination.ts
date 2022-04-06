@@ -25,21 +25,22 @@ export function paginatedSchema<Item>(itemSchema: JSONSchemaType<Item>): JSONSch
   }
 }
 
-const withPageToken = (pageToken: string): (fetcher: APIFetcher) => APIFetcher =>
-  fetcher =>
-    requestParams => {
-      const newParams = {...requestParams}
-      newParams.params['page-token'] = pageToken
+const withPageToken: (_: string) => (_: APIFetcher) => APIFetcher =
+  pageToken => fetcher => requestParams => {
+    const newParams = {...requestParams}
+    newParams.params['page-token'] = pageToken
 
-      return fetcher(newParams)
-    }
+    return fetcher(newParams)
+  }
 
-export const  paginatedRequest = <Item>(request: APIRequest<PaginatedResponse<Item>>): APIRequest<Item[]> =>
-  request.flatMap(response => response.next_page_token ?
-    makeNextPageRequest(request, response) :
-    constantResponseRequest(response.items))
+export const paginatedRequest: <Item>(_: APIRequest<PaginatedResponse<Item>>) => APIRequest<Item[]> =
+  request =>
+    request.flatMap(response => response.next_page_token ?
+      makeNextPageRequest(request, response) :
+      constantResponseRequest(response.items))
 
-const makeNextPageRequest = <Item>(request: APIRequest<PaginatedResponse<Item>>, response: PaginatedResponse<Item>): APIRequest<Item[]> =>
-  paginatedRequest(request.mapFetcher(withPageToken(response.next_page_token as string)))
-  .map(items => [...response.items, ...items])
+const makeNextPageRequest: <Item>(request: APIRequest<PaginatedResponse<Item>>, response: PaginatedResponse<Item>) => APIRequest<Item[]> =
+  (request, response) =>
+    paginatedRequest(request.mapFetcher(withPageToken(response.next_page_token as string)))
+    .map(items => [...response.items, ...items])
 

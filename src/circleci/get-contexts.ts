@@ -26,17 +26,11 @@ const schema: JSONSchemaType<GetContextsResponse> =
     },
   })
 
-export const getPath =
-  (ownerId: string): RequestParams => ({
-    path: 'context',
-    params: {'owner-id': ownerId},
-  })
+export const getRequestParams = (ownerId: string): RequestParams =>
+  ({path: 'context', params: {'owner-id': ownerId}})
 
 export const validate: SchemaValidator<GetContextsResponse> =
   validateWithJsonSchema(schema)
 
-export const createRequest =
-  (ownerId: string): APIRequest<GetContextsResponse> => API.createRequest(
-    getPath(ownerId),
-    validate,
-  )
+export const createRequest = (ownerId: string): APIRequest<GetContextsResponse> =>
+  API.createRequest(getRequestParams(ownerId), validate)
