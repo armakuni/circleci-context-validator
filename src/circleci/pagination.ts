@@ -25,16 +25,14 @@ export function paginatedSchema<Item>(itemSchema: JSONSchemaType<Item>): JSONSch
   }
 }
 
-function withPageToken(pagedToken: string): (fetcher: APIFetcher) => APIFetcher {
-  return fetcher => {
-    return requestParams => {
+const withPageToken = (pagedToken: string): (fetcher: APIFetcher) => APIFetcher =>
+  fetcher =>
+    requestParams => {
       const newParams = {...requestParams}
       newParams.params['page-token'] = pagedToken
 
       return fetcher(newParams)
     }
-  }
-}
 
 export const  paginatedRequest = <Item>(request: APIRequest<PaginatedResponse<Item>>): APIRequest<Item[]> =>
   request.flatMap(response => response.next_page_token ?
