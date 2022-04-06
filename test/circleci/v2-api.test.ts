@@ -9,6 +9,7 @@ import {
 } from '../../src/circleci'
 import {SchemaValidator, SchemaValidatorError} from '../../src/schema-validator'
 import {expect} from 'chai'
+import {mockFetcher} from '../helpers/mock-api'
 
 describe('v2-api', () => {
   describe('createRequest', () => {
@@ -28,10 +29,15 @@ describe('v2-api', () => {
     })
 
     it('throws when validate fails', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/example-resource')
-      .matchHeader('circle-token', 'access-token')
-      .reply(200, {})
+      const fetcher = mockFetcher([
+        {
+          requestParams: {
+            path: 'example-resource',
+            params: {},
+          },
+          response: {},
+        },
+      ])
 
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const validateFailure: SchemaValidator<string> = () => {
@@ -43,10 +49,15 @@ describe('v2-api', () => {
     })
 
     it('re-throws when validate fails unexpectedly', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/example-resource')
-      .matchHeader('circle-token', 'access-token')
-      .reply(200, {})
+      const fetcher = mockFetcher([
+        {
+          requestParams: {
+            path: 'example-resource',
+            params: {},
+          },
+          response: {},
+        },
+      ])
 
       const validateFailure: SchemaValidator<string> = () => {
         throw new Error('not a validate error')
@@ -57,10 +68,15 @@ describe('v2-api', () => {
     })
 
     it('returns the validated response', () => {
-      nock('https://circleci.com')
-      .get('/api/v2/example-resource')
-      .matchHeader('circle-token', 'access-token')
-      .reply(200, {message: 'hello'})
+      const fetcher = mockFetcher([
+        {
+          requestParams: {
+            path: 'example-resource',
+            params: {},
+          },
+          response: {message: 'hello'},
+        },
+      ])
 
       // eslint-disable-next-line unicorn/consistent-function-scoping
       const messageValidator: SchemaValidator<{message: string}> = (input: any) => input
