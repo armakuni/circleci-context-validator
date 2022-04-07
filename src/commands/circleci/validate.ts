@@ -31,11 +31,11 @@ export default class Validate extends Command {
    * - Collect contexts provided in config yaml from circle api
    * - Determine valid and missing contexts
    * - Process valid context retrieve env vars associated
-   * todo pagination for contexts, currently limited to first page
    * todo output results in user friendly fashion
    */
   public async run(): Promise<void> {
     const {flags} = await this.parse(Validate)
+
 
     const environment = this.loadEnvironment()
     const config = await Validate.loadConfig(flags['context-definitions'])
@@ -43,7 +43,9 @@ export default class Validate extends Command {
 
     const results = await this.validateCircleCIContexts(config, fetcher)
 
-    formatResult(results)
+    const exitCode = formatResult(results)
+
+    this.exit(exitCode)
   }
 
   private static async loadConfig(configPath: string) {

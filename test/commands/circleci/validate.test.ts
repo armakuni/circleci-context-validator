@@ -59,6 +59,7 @@ describe('circleci validate', () => {
   )
   .stdout()
   .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
+  .exit(0)
   .it('runs the circleci validate successfully', ctx => {
     expect(ctx.stdout).to.contain('context-one')
     expect(ctx.stdout).to.not.contain('context-two')
@@ -128,6 +129,7 @@ describe('circleci validate', () => {
   )
   .stdout()
   .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
+  .exit(1)
   .it('errors when the validation checks fail', ctx => {
     expect(ctx.stdout).to.contain('Context "context-one" is missing')
     expect(ctx.stdout).to.not.contain('Context "context-two" is missing')
