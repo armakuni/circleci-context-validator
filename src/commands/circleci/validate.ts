@@ -36,7 +36,6 @@ export default class Validate extends Command {
   public async run(): Promise<void> {
     const {flags} = await this.parse(Validate)
 
-
     const environment = this.loadEnvironment()
     const config = await Validate.loadConfig(flags['context-definitions'])
     const fetcher = createFetcher(environment.CIRCLECI_PERSONAL_ACCESS_TOKEN)
