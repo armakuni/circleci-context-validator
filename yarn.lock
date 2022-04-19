@@ -1094,10 +1094,10 @@ before-after-hook@^2.2.0:
   resolved "https://registry.yarnpkg.com/before-after-hook/-/before-after-hook-2.2.2.tgz#a6e8ca41028d90ee2c24222f201c90956091613e"
   integrity sha512-3pZEU3NT5BFUo/AD5ERPWOgQOCZITni6iavr5AUw5AUwQjMlI0kzu5btnyD39AF0gUEsDPwJT+oY1ORBJijPjQ==
 
-better-ajv-errors@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/better-ajv-errors/-/better-ajv-errors-1.1.2.tgz#6accafad01e1ae93121cf915c8c99377f609c010"
-  integrity sha512-xpFTC7JqkSGkvchJlH4IFtmwZ5SXomh0FqbEVEHRcXl/aiHh9nM/dnNnGTlxjrFCjWOVLLWpcNW1Hcrzs55/lg==
+better-ajv-errors@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/better-ajv-errors/-/better-ajv-errors-1.2.0.tgz#6412d58fa4d460ff6ccbd9e65c5fef9781cc5286"
+  integrity sha512-UW+IsFycygIo7bclP9h5ugkNH8EjCSgqyFB/yQ4Hqqa1OEYDtb0uFIkYE0b6+CjkgJYVM5UKI/pJPxjYe9EZlA==
   dependencies:
     "@babel/code-frame" "^7.16.0"
     "@humanwhocodes/momoa" "^2.0.2"
