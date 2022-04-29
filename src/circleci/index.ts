@@ -16,4 +16,3 @@ export const getContexts = (ownerId: string): APIRequest<ContextItem[]> =>
 
 export const getContextEnvironmentVariables = (contextId: string): APIRequest<EnvironmentVariable[]> =>
   paginatedRequest(GetContextEnvironmentVariables.createRequest(contextId))
-export {APIFetcher} from './api-fetcher'
