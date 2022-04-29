@@ -9,7 +9,7 @@ describe('validator', () => {
 
     beforeEach(() => {
       config = {
-        owner: {id: '***REMOVED***'},
+        owner: {id: '89137e7e-1255-4321-8888-221971005a18'},
         contexts: [
           {
             name: 'legacy-production',

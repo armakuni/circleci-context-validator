@@ -8,7 +8,7 @@ describe('circleci validate', () => {
   .do(
     createTempYamlFile('valid_config.yml', {
       owner: {
-        id: '***REMOVED***',
+        id: '89137e7e-1255-4321-8888-221971005a18',
       },
 
       contexts: [
@@ -28,7 +28,7 @@ describe('circleci validate', () => {
   )
   .nock('https://circleci.com', api => api
   .get('/api/v2/context')
-  .query({'owner-id': '***REMOVED***'})
+  .query({'owner-id': '89137e7e-1255-4321-8888-221971005a18'})
   .matchHeader('circle-token', 'pat123')
   .reply(200,
     {
@@ -71,7 +71,7 @@ describe('circleci validate', () => {
   .do(
     createTempYamlFile('valid_config.yml', {
       owner: {
-        id: '***REMOVED***',
+        id: '89137e7e-1255-4321-8888-221971005a18',
       },
 
       contexts: [
@@ -102,7 +102,7 @@ describe('circleci validate', () => {
   )
   .nock('https://circleci.com', api => api
   .get('/api/v2/context')
-  .query({'owner-id': '***REMOVED***'})
+  .query({'owner-id': '89137e7e-1255-4321-8888-221971005a18'})
   .matchHeader('circle-token', 'pat123')
   .reply(200,
     {
@@ -139,7 +139,7 @@ describe('circleci validate', () => {
   .do(setEnvVar('CIRCLECI_PERSONAL_ACCESS_TOKEN', 'pat123'))
   .do(createTempYamlFile('invalid_config.yml', {
     owner: {
-      id: '***REMOVED***',
+      id: '89137e7e-1255-4321-8888-221971005a18',
     },
   }))
   .command(['circleci validate', '--context-definitions', tempFilePath('invalid_config.yml')])
@@ -161,7 +161,7 @@ describe('circleci validate', () => {
   .do(
     createTempYamlFile('valid_config.yml', {
       owner: {
-        id: '***REMOVED***',
+        id: '89137e7e-1255-4321-8888-221971005a18',
       },
 
       contexts: [
@@ -181,7 +181,7 @@ describe('circleci validate', () => {
   )
   .nock('https://circleci.com', api => api
   .get('/api/v2/context')
-  .query({'owner-id': '***REMOVED***'})
+  .query({'owner-id': '89137e7e-1255-4321-8888-221971005a18'})
   .matchHeader('circle-token', 'pat123')
   .reply(500, {}),
   )
@@ -196,7 +196,7 @@ describe('circleci validate', () => {
   .do(
     createTempYamlFile('valid_config.yml', {
       owner: {
-        id: '***REMOVED***',
+        id: '89137e7e-1255-4321-8888-221971005a18',
       },
 
       contexts: [
@@ -216,7 +216,7 @@ describe('circleci validate', () => {
   )
   .nock('https://circleci.com', api => api
   .get('/api/v2/context')
-  .query({'owner-id': '***REMOVED***'})
+  .query({'owner-id': '89137e7e-1255-4321-8888-221971005a18'})
   .matchHeader('circle-token', 'pat123')
   .reply(200, {}),
   )
