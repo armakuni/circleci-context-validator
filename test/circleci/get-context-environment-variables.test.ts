@@ -6,8 +6,8 @@ import {
   validate,
 } from '../../src/circleci/get-context-environment-variables'
 import {SchemaValidatorError} from '../../src/schema-validator'
-import {APIFetcher, RequestParams} from '../../src/circleci/v2-api'
-import {BadApiResponseDataError} from '../../src/circleci'
+import {BadApiResponseDataError, RequestParams} from '../../src/circleci'
+import {APIFetcher} from '../../src/circleci/api-fetcher'
 
 describe('get-context-environment-variables', () => {
   describe('getPath', () => {

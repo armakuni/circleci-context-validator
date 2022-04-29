@@ -1,5 +1,6 @@
 import {JSONSchemaType} from 'ajv'
-import {APIFetcher, APIRequest, constantResponseRequest} from './v2-api'
+import {APIRequest, constantResponseRequest} from './api-request'
+import {APIFetcher} from './api-fetcher'
 
 export interface PaginatedResponse<Item> {
   // eslint-disable-next-line camelcase

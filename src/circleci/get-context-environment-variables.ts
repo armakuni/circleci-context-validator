@@ -1,8 +1,9 @@
 import * as API from './v2-api'
-import {APIRequest, RequestParams} from './v2-api'
 import {validateWithJsonSchema, SchemaValidator} from '../schema-validator'
 import {JSONSchemaType} from 'ajv'
 import {PaginatedResponse, paginatedSchema} from './pagination'
+import {APIRequest} from './api-request'
+import {RequestParams} from './api-fetcher'
 
 export type GetContextEnvironmentVariablesResponse = PaginatedResponse<EnvironmentVariable>
 

@@ -2,8 +2,8 @@ import {describe} from 'mocha'
 import {createRequest, getRequestParams, validate} from '../../src/circleci/get-contexts'
 import {expect} from 'chai'
 import {SchemaValidatorError} from '../../src/schema-validator'
-import {APIFetcher, RequestParams} from '../../src/circleci/v2-api'
-import {BadApiResponseDataError} from '../../src/circleci'
+import {BadApiResponseDataError, RequestParams} from '../../src/circleci'
+import {APIFetcher} from '../../src/circleci/api-fetcher'
 
 describe('get-contexts', () => {
   describe('getPath', () => {
