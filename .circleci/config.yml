@@ -2,10 +2,11 @@
 version: 2.1
 
 orbs:
-  release-management: salesforce/npm-release-management@4
+  release-management: salesforce/npm-release-management@4.37.0
 
 workflows:
   version: 2
+
   test-and-release:
     jobs:
       - release-management/test-package:
@@ -16,6 +17,7 @@ workflows:
               node_version:
                 - latest
                 - lts
+
   dependabot-automerge:
     triggers:
       - schedule:
