@@ -17,6 +17,20 @@ workflows:
               node_version:
                 - latest
                 - lts
+                - v16 #developed with
+                - v14
+      - release-management/release-package:
+          dryrun: true
+          github-release: true
+          filters:
+            branches:
+              only: main
+          requires:
+            - release-management/test-package-lts-linux
+            - release-management/test-package-latest-linux
+            - release-management/test-package-v16-linux
+            - release-management/test-package-v14-linux
+
 
   dependabot-automerge:
     triggers:
