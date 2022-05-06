@@ -16,7 +16,6 @@ async function request(personalAccessToken: string, requestParams: RequestParams
   const query = Object.entries(requestParams.params).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')
 
   const url = `https://circleci.com/api/v2/${requestParams.path}${query ? '?' + query : ''}`
-  console.log('request', url, JSON.stringify(requestParams))
 
   const response = await fetch(url, {
     headers: {

@@ -28,10 +28,10 @@ export default class Validate extends Command {
    * Orchestrate the validation process
    * - Load env vars required for circle api
    * - Load context definition yaml config containing context/env vars to validate
-   * - Collect contexts provided in config yaml from circle api
-   * - Determine valid and missing contexts
-   * - Process valid context retrieve env vars associated
-   * todo output results in user friendly fashion
+   * - Collect contexts provided in config yaml from circle api (paginated)
+   * - Determine valid and missing/unassociated contexts
+   * - Process any valid contexts to retrieve env vars associated
+   * - output and exit with appropriate code
    */
   public async run(): Promise<void> {
     const {flags} = await this.parse(Validate)
