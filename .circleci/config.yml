@@ -19,6 +19,7 @@ workflows:
                 - lts
                 - v16 #developed with
       - release-management/release-package:
+          context: context-validator-ci
           dryrun: true
           github-release: true
           node_version: v16
