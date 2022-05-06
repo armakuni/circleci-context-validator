@@ -11,13 +11,20 @@ contexts:
         labels:
           - token
           - git
-      NPM_TOKEN:
+          - dependabot
+      GH_USERNAME:
         state: required
-        purpose: publishing cli tool to npm
+        purpose: Github releases via salesforce release tool
         labels:
-          - token
           - release
-      API_KEY:
+          - git
+      GH_EMAIL:
+        state: required
+        purpose: Github releases via salesforce release tool
+        labels:
+          - release
+          - git
+      NPM_TOKEN:
         state: required
         purpose: publishing cli tool to npm
         labels:
