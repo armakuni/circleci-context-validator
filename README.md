@@ -27,11 +27,11 @@ CircleCI Context Validator (*CCV for short*) makes use of a simple yaml configur
 
 # Install
 ```sh-session
-$ npm install -g circleci-context-validator
+$ npm install -g @armakuni/circleci-context-validator
 ``` 
 or 
 ```sh-session
-$ yarn global add circleci-context-validator
+$ yarn global add @armakuni/circleci-context-validator
 ```
 
 # Commands
@@ -56,8 +56,6 @@ FLAGS
 DESCRIPTION
   Display help for ccv.
 ```
-
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.10/src/commands/help.ts)_
 
 # Examples
 Run the CLI tool:
