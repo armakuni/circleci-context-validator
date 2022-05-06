@@ -21,7 +21,7 @@ workflows:
       - release-management/release-package:
           dryrun: true
           github-release: true
-          node_version: 16
+          node_version: v16
           filters:
             branches:
               only: main
