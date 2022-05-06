@@ -1,0 +1,25 @@
+owner:
+  id: 0918da7f-4092-4153-9675-0f8a9389c273
+
+contexts:
+  - name: context-validator-ci
+    purpose: Used for circleci-context-validator CI builds and publishing
+    environment-variables:
+      GH_TOKEN:
+        state: required
+        purpose: dependabot and salesforce release management usage
+        labels:
+          - token
+          - git
+      NPM_TOKEN:
+        state: required
+        purpose: publishing cli tool to npm
+        labels:
+          - token
+          - release
+      API_KEY:
+        state: required
+        purpose: publishing cli tool to npm
+        labels:
+          - token
+          - release
