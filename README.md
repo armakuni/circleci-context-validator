@@ -3,7 +3,6 @@ CircleCI Context Validator CLI Tool
 
 [![CircleCI](https://circleci.com/gh/armakuni/circleci-context-validator/tree/main.svg?style=svg&circle-token=e243ff035113b5a9b5d5b939673556e063ac3b5a)](https://circleci.com/gh/armakuni/circleci-context-validator/tree/main)
 
-<!-- toc -->
 * [Purpose](#purpose)
 * [Prerequisites](#prerequisites)
 * [Install](#install)
@@ -11,7 +10,6 @@ CircleCI Context Validator CLI Tool
 * [Example](#examples)
 * [Dev Mode](#development)
 * [WIP](#wip)
-<!-- tocstop -->
 
 # Purpose 
 As projects grow, team members drop in and out and the documented state of environment variables become a mystery, and left in a precarious state not knowing if a varaible is required any more looking at the Circle UI.
@@ -37,7 +35,7 @@ $ yarn global add @armakuni/circleci-context-validator
 # Commands
 ```
 $ ccv (--version)
-circleci-context-validator/0.0.0 darwin-x64 node-v14.17.0
+@armakuni/circleci-context-validator/<semver> darwin-x64 node-v16.13.1
 $ ccv --help [COMMAND]
 USAGE
   $ CIRCLECI_PERSONAL_ACCESS_TOKEN=example-token ccv circleci validate --context-definitions example/context_validator.yml
@@ -108,3 +106,4 @@ CIRCLECI_PERSONAL_ACCESS_TOKEN=generate_personal_access_token bin/dev circleci v
 - Pretty console output
 - Different output formats e.g. JSON
 - Support for standard Environment Variables i.e. non-context associated
+- Autocomplete commands
