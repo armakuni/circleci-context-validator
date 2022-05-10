@@ -24,11 +24,8 @@ workflows:
           github-release: true
           node_version: v16
           post-job-steps:
-            - run:
-              name: install latest ccv and run
-              command: |
-                  yarn global add @armakuni/circleci-context-validator@latest
-                  ccv circleci validate --context-definitions .circleci/context_validator.yml
+            - run: yarn global add @armakuni/circleci-context-validator@latest
+            - run: ccv circleci validate --context-definitions .circleci/context_validator.yml
           filters:
             branches:
               only: main
