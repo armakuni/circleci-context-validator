@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  release-management: salesforce/npm-release-management@4.37.0
+  release-management: salesforce/npm-release-management@4
 
 workflows:
   version: 2
@@ -23,6 +23,12 @@ workflows:
           dryrun: false
           github-release: true
           node_version: v16
+          post-job-steps:
+            - run:
+              name: install latest ccv and run
+              command: |
+                  yarn global add @armakuni/circleci-context-validator@latest
+                  ccv circleci validate --context-definitions .circleci/context_validator.yml
           filters:
             branches:
               only: main
