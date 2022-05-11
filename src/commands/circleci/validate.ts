@@ -9,6 +9,8 @@ import {ContextValidatorResult} from '../../context-validator/types'
 import {formatResult} from '../../format/console'
 
 export default class Validate extends Command {
+  public static enableJsonFlag = true
+
   public static description = 'Validate that CircleCI contexts have required values.';
 
   public static examples = [
