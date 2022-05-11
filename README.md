@@ -9,7 +9,7 @@ CircleCI Context Validator CLI Tool
 * [Commands](#commands)
 * [Example](#examples)
 * [Dev Mode](#development)
-* [WIP](#wip)
+* [Upcoming & WIP](#upcoming)
 
 # Purpose 
 As projects grow, team members drop in and out and the documented state of environment variables become a mystery, and left in a precarious state not knowing if a varaible is required any more looking at the Circle UI.
@@ -60,6 +60,7 @@ Run the CLI tool:
 ```sh
 CIRCLECI_PERSONAL_ACCESS_TOKEN=example-token ccv circleci validate --context-definitions .circleci/context_validator.yml
 ```
+![example cli usage](./docs/demo.svg)
 
 ## All Valid 
 Context exists, associated env var values configured exist in context definition yaml.
@@ -89,6 +90,7 @@ Failures 1
 ```
 
 # Development
+How to dev on `circleci-context-validator`, for a quick start guide checkout [oclif](https://oclif.io) which this tool makes heavy use of.
 ## Entrypoint
 Command entrypoint is located: `circleci-context-validator/src/commands/circleci/validate`
 ## NVM
@@ -102,8 +104,9 @@ $ nvm use .
 CIRCLECI_PERSONAL_ACCESS_TOKEN=generate_personal_access_token bin/dev circleci validate --context-definitions example/context_validator.yml
 ```
 
-# WIP
+# Upcoming
 - Pretty console output
 - Different output formats e.g. JSON
 - Support for standard Environment Variables i.e. non-context associated
 - Autocomplete commands
+- Retrieve existing context and associated env vars to pre-populate a context_validator.yml
