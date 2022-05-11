@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/armakuni/circleci-context-validator/compare/v0.1.0...v0.1.1) (2022-05-11)
+
+
+### Features
+
+* basic json exit output ([1f92024](https://github.com/armakuni/circleci-context-validator/commit/1f92024069d01a6e82c3ef8e6abf04b16acbd274))
+
 ## 0.1.0 (2022-05-09)
 
 
