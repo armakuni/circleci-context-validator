@@ -30,3 +30,10 @@ contexts:
         labels:
           - token
           - release
+      CIRCLECI_PERSONAL_ACCESS_TOKEN:
+        state: required
+        purpose: running ccv tool requires a personal access token, used for smoke test post-release
+        labels:
+          - token
+          - release
+          - test
