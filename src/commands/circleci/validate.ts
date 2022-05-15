@@ -55,7 +55,7 @@ export default class Validate extends Command {
 
   private async validateCircleCIContexts(config: Config, fetcher: APIFetcher): Promise<ContextValidatorResult[]> {
     try {
-      return await validateContexts(config).map(([result]) => result)(fetcher)
+      return await validateContexts(config)(fetcher)
     } catch (error) {
       if (error instanceof ApiRequestError || error instanceof BadApiResponseDataError) {
         this.error('CircleCI API request failed: \n' + (error as Error).toString(), {
