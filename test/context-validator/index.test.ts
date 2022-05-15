@@ -43,7 +43,10 @@ describe('context-validator', () => {
           }},
       ])
 
-      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextValidatedResult('context-one')])
+      return expect(validateContexts(config)(fetcher)).to.eventually.eql([
+        [new ContextValidatedResult('context-one')],
+        [{name: 'context-one', 'environment-variables': []}],
+      ])
     })
 
     it('perform a unsuccessful validation when a environment variable is missing', () => {
@@ -85,7 +88,10 @@ describe('context-validator', () => {
           }},
       ])
 
-      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextEnvVarMissingResult('context-one', 'AWS_SECRET_KEY_VALUE')])
+      return expect(validateContexts(config)(fetcher)).to.eventually.eql([
+        [new ContextEnvVarMissingResult('context-one', 'AWS_SECRET_KEY_VALUE')],
+        [{name: 'context-one', 'environment-variables': []}],
+      ])
     })
 
     it('perform a unsuccessful validation due to missing context in circle', () => {
@@ -117,7 +123,10 @@ describe('context-validator', () => {
           }},
       ])
 
-      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextMissingResult('context-one')])
+      return expect(validateContexts(config)(fetcher)).to.eventually.eql([
+        [new ContextMissingResult('context-one')],
+        [],
+      ])
     })
 
     it('perform a successful validation, but contains optional env var', () => {
@@ -168,7 +177,10 @@ describe('context-validator', () => {
           }},
       ])
 
-      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextValidatedResult('context-one')])
+      return expect(validateContexts(config)(fetcher)).to.eventually.eql([
+        [new ContextValidatedResult('context-one')],
+        [{name: 'context-one', 'environment-variables': ['AWS_SECRET_KEY_VALUE']}],
+      ])
     })
 
     it('perform a unsuccessful validation, api returns additional env var value not configured', () => {
@@ -219,7 +231,10 @@ describe('context-validator', () => {
           }},
       ])
 
-      return expect(validateContexts(config)(fetcher)).to.eventually.eql([new ContextEnvVarUnexpectedResult('context-one', 'AWS_ACCESS_KEY_ID')])
+      return expect(validateContexts(config)(fetcher)).to.eventually.eql([
+        [new ContextEnvVarUnexpectedResult('context-one', 'AWS_ACCESS_KEY_ID')],
+        [{name: 'context-one', 'environment-variables': ['AWS_SECRET_KEY_VALUE', 'AWS_ACCESS_KEY_ID']}],
+      ])
     })
   })
 })

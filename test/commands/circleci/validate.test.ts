@@ -57,6 +57,19 @@ describe('circleci validate', () => {
     }],
   }),
   )
+  .nock('https://circleci.com', api => api
+  .get('/api/v2/context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable')
+  .matchHeader('circle-token', 'pat123')
+  .reply(200, {
+    next_page_token: null, // eslint-disable-line camelcase
+    items: [{
+      variable: 'AWS_SECRET_KEY_VALUE',
+      context_id: '00a9f111-55f6-46b9-8b85-57845802075d', // eslint-disable-line camelcase
+      created_at: '2020-10-14T09:16:29.036Z', // eslint-disable-line camelcase
+    }],
+  }),
+  )
+
   .stdout()
   .command(['circleci validate', '--context-definitions', tempFilePath('valid_config.yml')])
   .exit(0)
@@ -114,6 +127,18 @@ describe('circleci validate', () => {
       }],
     },
   ),
+  )
+  .nock('https://circleci.com', api => api
+  .get('/api/v2/context/222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5/environment-variable')
+  .matchHeader('circle-token', 'pat123')
+  .reply(200, {
+    next_page_token: null, // eslint-disable-line camelcase
+    items: [{
+      variable: 'AWS_SECRET_KEY_VALUE',
+      context_id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5', // eslint-disable-line camelcase
+      created_at: '2020-10-14T09:16:29.036Z', // eslint-disable-line camelcase
+    }],
+  }),
   )
   .nock('https://circleci.com', api => api
   .get('/api/v2/context/222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5/environment-variable')
