@@ -3,9 +3,9 @@ import {
   ContextMissingResult,
   ContextValidatedResult,
   ContextValidatorResult,
-  FetchedContext,
 } from './types'
 import {Config, Context} from '../config/config'
+import {FetchedContext} from './request'
 
 export default function validate(config: Config, fetchedContexts: FetchedContext[]): ContextValidatorResult[] {
   const fetchedContextNames = new Map(fetchedContexts.map(context => [context.name, context]))

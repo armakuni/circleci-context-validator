@@ -1,6 +1,10 @@
 import {Config} from '../config/config'
 import {APIRequest, ContextItem, getContextEnvironmentVariables, getContexts, sequenceRequest} from '../circleci'
-import {FetchedContext} from './types'
+
+export interface FetchedContext {
+  name: string
+  'environment-variables': string[]
+}
 
 export const getContextsWithEnvVars: (_: Config) => APIRequest<FetchedContext[]> =
   config =>

@@ -5,9 +5,10 @@ import {
   ContextEnvVarUnexpectedResult,
   ContextMissingResult,
   ContextValidatedResult,
-  FetchedContext,
+
 } from '../../src/context-validator/types'
 import validate from '../../src/context-validator/validate'
+import {FetchedContext} from '../../src/context-validator/request'
 
 describe('validate', () => {
   describe('validate', () => {
