@@ -1,7 +1,7 @@
 import {expect} from 'chai'
 import {validateContexts} from '../../src/context-validator'
 import {Config} from '../../src/config/config'
-import {ContextEnvVarMissingResult, ContextValidatedResult} from '../../src/context-validator/types'
+import {ContextEnvVarMissingResult, ContextValidatedResult} from '../../src/context-validator'
 import {mockFetcher} from '../helpers/mock-api'
 
 describe('context-validator', () => {

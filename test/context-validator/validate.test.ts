@@ -6,7 +6,7 @@ import {
   ContextMissingResult,
   ContextValidatedResult,
 
-} from '../../src/context-validator/types'
+} from '../../src/context-validator'
 import validate from '../../src/context-validator/validate'
 import {FetchedContext} from '../../src/context-validator/request'
 

@@ -1,8 +1,10 @@
 import {APIRequest} from '../circleci'
 import {Config} from '../config/config'
-import {ContextValidatorResult} from './types'
+import {ContextValidatorResult} from './result'
 import validate from './validate'
 import {getContextsWithEnvVars} from './request'
+
+export * from './result'
 
 export const validateContexts: (_: Config) => APIRequest<ContextValidatorResult[]> =
   config =>

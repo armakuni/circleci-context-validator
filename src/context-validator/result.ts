@@ -21,4 +21,3 @@ export class ContextEnvVarUnexpectedResult {
   private readonly tag = 'ContextEnvVarUnexpectedResult'
   constructor(public readonly contextName: string, public readonly envVarName: string) {} // eslint no-useless-constructor
 }
-

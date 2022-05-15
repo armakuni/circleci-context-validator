@@ -5,7 +5,7 @@ import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
 import {APIFetcher, ApiRequestError, BadApiResponseDataError, createFetcher} from '../../circleci'
 import {validateContexts} from '../../context-validator'
-import {ContextValidatorResult} from '../../context-validator/types'
+import {ContextValidatorResult} from '../../context-validator'
 import {formatResult} from '../../format/console'
 
 export default class Validate extends Command {

@@ -3,7 +3,7 @@ import {
   ContextMissingResult,
   ContextValidatedResult,
   ContextValidatorResult,
-} from './types'
+} from './result'
 import {Config, Context} from '../config/config'
 import {FetchedContext} from './request'
 
