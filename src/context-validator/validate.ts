@@ -17,7 +17,7 @@ export default function validate(config: Config, fetchedContexts: FetchedContext
 }
 
 function validateEnvVars(contextName: string, contextConfig: Context, fetchedContext: FetchedContext): ContextValidatorResult[] {
-  const envVarNames = new Set(fetchedContext['environment-variables'])
+  const envVarNames = new Set(fetchedContext.environmentVariables)
   const expectedEnvVars = new Set(Object.keys(contextConfig['environment-variables']))
 
   const missingErrors = Object.entries(contextConfig['environment-variables'])
@@ -25,7 +25,7 @@ function validateEnvVars(contextName: string, contextConfig: Context, fetchedCon
   .filter(([_, config])  => config.state === 'required')
   .map(([name]) => new ContextEnvVarMissingResult(contextName, name))
 
-  const unexpectedErrors = fetchedContext['environment-variables']
+  const unexpectedErrors = fetchedContext.environmentVariables
   .filter(name => !expectedEnvVars.has(name))
   .map(name => new ContextEnvVarUnexpectedResult(contextName, name))
 

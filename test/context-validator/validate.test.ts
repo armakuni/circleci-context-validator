@@ -27,7 +27,7 @@ describe('validate', () => {
       }
 
       const fetchedContexts = [
-        {name: 'context-one', 'environment-variables': []},
+        {name: 'context-one', environmentVariables: []},
       ]
 
       return expect(validate(config, fetchedContexts)).to.eql([new ContextValidatedResult('context-one')])
@@ -54,7 +54,7 @@ describe('validate', () => {
       }
 
       const fetchedContexts = [
-        {name: 'context-one', 'environment-variables': []},
+        {name: 'context-one', environmentVariables: []},
       ]
 
       return expect(validate(config, fetchedContexts)).to.eql([
@@ -115,7 +115,7 @@ describe('validate', () => {
       }
 
       const fetchedContexts = [
-        {name: 'context-one', 'environment-variables': ['AWS_SECRET_KEY_VALUE']},
+        {name: 'context-one', environmentVariables: ['AWS_SECRET_KEY_VALUE']},
       ]
 
       return expect(validate(config, fetchedContexts)).to.eql([
@@ -144,7 +144,7 @@ describe('validate', () => {
       }
 
       const fetchedContexts = [
-        {name: 'context-one', 'environment-variables': ['AWS_SECRET_KEY_VALUE', 'AWS_ACCESS_KEY_ID']},
+        {name: 'context-one', environmentVariables: ['AWS_SECRET_KEY_VALUE', 'AWS_ACCESS_KEY_ID']},
       ]
 
       return expect(validate(config, fetchedContexts)).to.eql([

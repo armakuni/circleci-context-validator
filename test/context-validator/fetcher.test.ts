@@ -43,7 +43,7 @@ describe('context-validator', () => {
       ])
 
       return expect(getContextsWithEnvVars(config)(fetcher)).to.eventually.eql([
-        {name: 'context-one', 'environment-variables': []},
+        {name: 'context-one', environmentVariables: []},
       ])
     })
 
@@ -87,7 +87,7 @@ describe('context-validator', () => {
       ])
 
       return expect(getContextsWithEnvVars(config)(fetcher)).to.eventually.eql([
-        {name: 'context-one', 'environment-variables': []},
+        {name: 'context-one', environmentVariables: []},
       ])
     })
 
@@ -172,7 +172,7 @@ describe('context-validator', () => {
       ])
 
       return expect(getContextsWithEnvVars(config)(fetcher)).to.eventually.eql([
-        {name: 'context-one', 'environment-variables': ['AWS_SECRET_KEY_VALUE']},
+        {name: 'context-one', environmentVariables: ['AWS_SECRET_KEY_VALUE']},
       ])
     })
 
@@ -225,7 +225,7 @@ describe('context-validator', () => {
       ])
 
       return expect(getContextsWithEnvVars(config)(fetcher)).to.eventually.eql([
-        {name: 'context-one', 'environment-variables': ['AWS_SECRET_KEY_VALUE', 'AWS_ACCESS_KEY_ID']},
+        {name: 'context-one', environmentVariables: ['AWS_SECRET_KEY_VALUE', 'AWS_ACCESS_KEY_ID']},
       ])
     })
   })

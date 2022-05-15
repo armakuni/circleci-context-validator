@@ -3,7 +3,7 @@ import {APIRequest, ContextItem, getContextEnvironmentVariables, getContexts, se
 
 export interface FetchedContext {
   name: string
-  'environment-variables': string[]
+  environmentVariables: string[]
 }
 
 export const getContextsWithEnvVars: (_: Config) => APIRequest<FetchedContext[]> =
@@ -26,5 +26,5 @@ const fetchContextDetails: (context: ContextItem) => APIRequest<FetchedContext> 
   context =>
     getContextEnvironmentVariables(context.id).map(response => ({
       name: context.name,
-      'environment-variables': response.map(entry => entry.variable),
+      environmentVariables: response.map(entry => entry.variable),
     }))
