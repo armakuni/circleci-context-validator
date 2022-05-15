@@ -1,4 +1,3 @@
-import {Config} from '../config/config'
 import {APIRequest, ContextItem, getContextEnvironmentVariables, getContexts, sequenceRequest} from '../circleci'
 
 export interface FetchedContext {
@@ -6,15 +5,13 @@ export interface FetchedContext {
   environmentVariables: string[]
 }
 
-export const getContextsWithEnvVars: (_: Config) => APIRequest<FetchedContext[]> =
-  config =>
-    getContexts(config.owner.id)
-    .flatMap(fetchedContexts => fetchContextsDetails(config, fetchedContexts))
+export const getContextsWithEnvVars: (ownerId: string, contexts: Set<string>) => APIRequest<FetchedContext[]> =
+  (ownerId, contexts) =>
+    getContexts(ownerId)
+    .flatMap(fetchedContexts => fetchContextsDetails(contexts, fetchedContexts))
 
-const fetchContextsDetails: (_: Config, fetchedContexts: ContextItem[]) => APIRequest<FetchedContext[]> =
-  (config, fetchedContexts) => {
-    const requestedContexts = new Set(config.contexts.map(context => context.name))
-
+const fetchContextsDetails: (_: Set<string>, fetchedContexts: ContextItem[]) => APIRequest<FetchedContext[]> =
+  (requestedContexts, fetchedContexts) => {
     const requests: APIRequest<FetchedContext>[] = fetchedContexts
     .filter(context => requestedContexts.has(context.name))
     .map(context => fetchContextDetails(context))

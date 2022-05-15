@@ -8,5 +8,5 @@ export * from './result'
 
 export const validateContexts: (_: Config) => APIRequest<ContextValidatorResult[]> =
   config =>
-    getContextsWithEnvVars(config).map(contexts => validate(config, contexts))
-
+    getContextsWithEnvVars(config.owner.id, new Set(config.contexts.map(context => context.name)))
+    .map(contexts => validate(config, contexts))
