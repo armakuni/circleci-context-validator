@@ -4,7 +4,7 @@ import {
   ContextValidatedResult,
   ContextValidatorResult,
 } from './result'
-import {Config, Context} from '../config/config'
+import {Config, ExpectedContext} from '../config/config'
 import {FetchedContext} from './request'
 
 export default function validate(config: Config, fetchedContexts: FetchedContext[]): ContextValidatorResult[] {
@@ -16,7 +16,7 @@ export default function validate(config: Config, fetchedContexts: FetchedContext
   )
 }
 
-function validateEnvVars(contextName: string, contextConfig: Context, fetchedContext: FetchedContext): ContextValidatorResult[] {
+function validateEnvVars(contextName: string, contextConfig: ExpectedContext, fetchedContext: FetchedContext): ContextValidatorResult[] {
   const envVarNames = new Set(fetchedContext.environmentVariables)
   const expectedEnvVars = new Set(Object.keys(contextConfig['environment-variables']))
 
