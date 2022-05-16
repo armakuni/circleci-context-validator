@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/armakuni/circleci-context-validator/compare/v0.1.4...v0.1.5) (2022-05-16)
+
+
+### Features
+
+* warn if a newer version is availible async via oclif plugin ([91185bc](https://github.com/armakuni/circleci-context-validator/commit/91185bc4458d1530e92c254f192d93f86d2cce29))
+
 ### [0.1.4](https://github.com/armakuni/circleci-context-validator/compare/v0.1.3...v0.1.4) (2022-05-16)
 
 
