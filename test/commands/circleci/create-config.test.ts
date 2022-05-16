@@ -1,6 +1,7 @@
 import {expect, test} from '@oclif/test'
 import * as yaml from 'js-yaml'
 import {setEnvVar, unsetEnvVar} from '../../helpers/environment'
+import {getContextsResponse, getContextEnvVarsResponse} from '../../helpers/circleci-api-responses'
 
 describe('circleci create-config', () => {
   test
@@ -9,48 +10,17 @@ describe('circleci create-config', () => {
   .get('/api/v2/context')
   .query({'owner-id': '89137e7e-1255-4321-8888-221971005a18'})
   .matchHeader('circle-token', 'pat123')
-  .reply(200,
-    {
-      next_page_token: null, // eslint-disable-line camelcase
-      items: [{
-        name: 'context-one',
-        id: '00a9f111-55f6-46b9-8b85-57845802075d',
-        created_at: '2020-10-14T09:02:53.453Z', // eslint-disable-line camelcase
-      }, {
-        name: 'context-two',
-        id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5',
-        created_at: '2021-09-02T14:42:20.126Z', // eslint-disable-line camelcase
-      }, {
-        name: 'context-three',
-        id: '2c5bce35-4d5a-4b5e-a65e-0ac9940b18d2',
-        created_at: '2021-09-02T14:42:20.126Z', // eslint-disable-line camelcase
-      }],
-    },
-  ),
-  )
-  .nock('https://circleci.com', api => api
+  .reply(200, getContextsResponse([
+    {name: 'context-one', id: '00a9f111-55f6-46b9-8b85-57845802075d'},
+    {name: 'context-two', id: '222db7a8-f9e9-41d7-a1a9-e3ba1b4e0cd5'},
+    {name: 'context-three', id: '2c5bce35-4d5a-4b5e-a65e-0ac9940b18d2'},
+  ]))
   .get('/api/v2/context/00a9f111-55f6-46b9-8b85-57845802075d/environment-variable')
   .matchHeader('circle-token', 'pat123')
-  .reply(200, {
-    next_page_token: null, // eslint-disable-line camelcase
-    items: [{
-      variable: 'AWS_SECRET_KEY_VALUE',
-      context_id: '00a9f111-55f6-46b9-8b85-57845802075d', // eslint-disable-line camelcase
-      created_at: '2020-10-14T09:16:29.036Z', // eslint-disable-line camelcase
-    }],
-  }),
-  )
-  .nock('https://circleci.com', api => api
+  .reply(200, getContextEnvVarsResponse('00a9f111-55f6-46b9-8b85-57845802075d', ['AWS_SECRET_KEY_VALUE']))
   .get('/api/v2/context/2c5bce35-4d5a-4b5e-a65e-0ac9940b18d2/environment-variable')
   .matchHeader('circle-token', 'pat123')
-  .reply(200, {
-    next_page_token: null, // eslint-disable-line camelcase
-    items: [{
-      variable: 'SECRET_VALUE',
-      context_id: '2c5bce35-4d5a-4b5e-a65e-0ac9940b18d2', // eslint-disable-line camelcase
-      created_at: '2020-10-14T09:16:29.036Z', // eslint-disable-line camelcase
-    }],
-  }),
+  .reply(200, getContextEnvVarsResponse('2c5bce35-4d5a-4b5e-a65e-0ac9940b18d2', ['SECRET_VALUE'])),
   )
   .stdout()
   .command(['circleci create-config', '--owner-id', '89137e7e-1255-4321-8888-221971005a18', '--contexts', 'context-one,context-three'])

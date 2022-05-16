@@ -5,8 +5,8 @@ import {APIFetcher, ApiRequestError, RequestParams} from '../../src/circleci'
  * @param responses mocked output to return based on a URI path existence
  * @returns mocked output or api error
  */
-export const mockFetcher = (responses: {requestParams: RequestParams, response: any}[]): APIFetcher => {
-  return (requestParams: RequestParams) => {
+export const mockFetcher = (responses: {requestParams: RequestParams, response: any}[]): APIFetcher =>
+  (requestParams: RequestParams) => {
     for (const res of responses) {
       if (RequestParams.equal(requestParams, res.requestParams)) {
         return Promise.resolve(res.response)
@@ -15,4 +15,3 @@ export const mockFetcher = (responses: {requestParams: RequestParams, response: 
 
     throw new ApiRequestError('failed to find response with path')
   }
-}
