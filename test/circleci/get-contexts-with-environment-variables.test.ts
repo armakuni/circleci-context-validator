@@ -1,8 +1,8 @@
 import {expect} from 'chai'
-import {getContextsWithEnvVars} from '../../src/context-validator/request'
+import {getContextsWithEnvironmentVariables} from '../../src/circleci'
 import {mockFetcher} from '../helpers/mock-api'
 
-describe('getContextsWithEnvVars', () => {
+describe('getContextsWithEnvironmentVariables', () => {
   it('gets a requested contexts', () => {
     const fetcher = mockFetcher([
       {
@@ -32,7 +32,7 @@ describe('getContextsWithEnvVars', () => {
         }},
     ])
 
-    return expect(getContextsWithEnvVars('71362723', new Set(['context-one']))(fetcher)).to.eventually.eql([
+    return expect(getContextsWithEnvironmentVariables('71362723', new Set(['context-one']))(fetcher)).to.eventually.eql([
       {name: 'context-one', environmentVariables: ['AWS_SECRET_KEY_VALUE', 'AWS_ACCESS_KEY_ID']},
     ])
   })
@@ -61,7 +61,7 @@ describe('getContextsWithEnvVars', () => {
         }},
     ])
 
-    return expect(getContextsWithEnvVars('71362723', new Set(['context-one']))(fetcher)).to.eventually.eql([
+    return expect(getContextsWithEnvironmentVariables('71362723', new Set(['context-one']))(fetcher)).to.eventually.eql([
       {name: 'context-one', environmentVariables: []},
     ])
   })

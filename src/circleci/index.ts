@@ -10,6 +10,7 @@ export * from './v2-api'
 export * from './api-fetcher'
 export * from './api-request'
 export {GetContextsResponse, ContextItem} from './get-contexts'
+export * from './get-contexts-with-environment-variables'
 
 export const getContexts = (ownerId: string): APIRequest<ContextItem[]> =>
   paginatedRequest(GetContexts.createRequest(ownerId))

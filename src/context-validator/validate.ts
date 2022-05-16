@@ -5,7 +5,7 @@ import {
   ContextValidatorResult,
 } from './result'
 import {Config, ExpectedContext} from '../config/config'
-import {FetchedContext} from './request'
+import {FetchedContext} from '../circleci'
 
 export default function validate(config: Config, fetchedContexts: FetchedContext[]): ContextValidatorResult[] {
   const fetchedContextNames = new Map(fetchedContexts.map(context => [context.name, context]))

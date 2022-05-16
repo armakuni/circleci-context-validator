@@ -3,7 +3,7 @@ import * as yaml from 'js-yaml'
 import {Environment, loadEnvironment} from '../../lib/environment'
 import {Config} from '../../config/config'
 import {APIFetcher, ApiRequestError, BadApiResponseDataError, createFetcher} from '../../circleci'
-import {getContextsWithEnvVars} from '../../context-validator/request'
+import {getContextsWithEnvironmentVariables} from '../../circleci'
 import {create} from '../../config/creator'
 
 export default class CreateConfig extends Command {
@@ -42,7 +42,7 @@ export default class CreateConfig extends Command {
 
   private async fetchContextsAndGenerateConfig(ownerId: string, contexts: string[], fetcher: APIFetcher): Promise<Config> {
     try {
-      return await getContextsWithEnvVars(ownerId, new Set(contexts)).map(fetched => create(ownerId, fetched))(fetcher)
+      return await getContextsWithEnvironmentVariables(ownerId, new Set(contexts)).map(fetched => create(ownerId, fetched))(fetcher)
     } catch (error) {
       if (error instanceof ApiRequestError || error instanceof BadApiResponseDataError) {
         this.error('CircleCI API request failed: \n' + (error as Error).toString(), {

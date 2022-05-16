@@ -1,11 +1,11 @@
-import {APIRequest, ContextItem, getContextEnvironmentVariables, getContexts, sequenceRequest} from '../circleci'
+import {APIRequest, ContextItem, getContextEnvironmentVariables, getContexts, sequenceRequest} from './index'
 
 export interface FetchedContext {
   name: string
   environmentVariables: string[]
 }
 
-export const getContextsWithEnvVars: (ownerId: string, contexts: Set<string>) => APIRequest<FetchedContext[]> =
+export const getContextsWithEnvironmentVariables: (ownerId: string, contexts: Set<string>) => APIRequest<FetchedContext[]> =
   (ownerId, contexts) =>
     getContexts(ownerId)
     .flatMap(fetchedContexts => fetchContextsDetails(contexts, fetchedContexts))

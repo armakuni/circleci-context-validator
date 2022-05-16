@@ -8,7 +8,7 @@ import {
 
 } from '../../src/context-validator'
 import validate from '../../src/context-validator/validate'
-import {FetchedContext} from '../../src/context-validator/request'
+import {FetchedContext} from '../../src/circleci/get-contexts-with-environment-variables'
 
 describe('validate', () => {
   it('perform a successful validation', () => {

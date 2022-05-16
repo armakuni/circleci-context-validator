@@ -1,5 +1,5 @@
 import {Config, ExpectedContext} from './config'
-import {FetchedContext} from '../context-validator/request'
+import {FetchedContext} from '../circleci/get-contexts-with-environment-variables'
 
 const environmentVariablesConfig: (_: FetchedContext) => { [k: string]: { state: string, purpose: string, labels: string[] } } =
   context =>
