@@ -6,7 +6,7 @@ import {Config} from '../../config/config'
 import {APIFetcher, ApiRequestError, BadApiResponseDataError, createFetcher} from '../../circleci'
 import {validateContexts} from '../../context-validator'
 import {ContextValidatorResult} from '../../context-validator'
-import {formatResult} from '../../format/console'
+import {formatResult} from '../../formatter/console'
 
 export default class Validate extends Command {
   public static enableJsonFlag = true
