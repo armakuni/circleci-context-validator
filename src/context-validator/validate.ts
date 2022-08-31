@@ -31,5 +31,5 @@ function validateEnvVars(contextName: string, contextConfig: ExpectedContext, fe
 
   const errors = [...missingErrors, ...unexpectedErrors]
 
-  return errors.length > 0 ? errors : [new ContextValidatedResult('context-one')]
+  return errors.length > 0 ? errors : [new ContextValidatedResult(contextName)]
 }
