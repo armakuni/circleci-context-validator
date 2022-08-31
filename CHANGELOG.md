@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/armakuni/circleci-context-validator/compare/v0.1.6...v0.1.7) (2022-08-31)
+
+
+### Bug Fixes
+
+* Replace string constant with value ([3367d08](https://github.com/armakuni/circleci-context-validator/commit/3367d08f8c63dab60afd4a5ecd185c0adabf011f))
+
 ### [0.1.6](https://github.com/armakuni/circleci-context-validator/compare/v0.1.5...v0.1.6) (2022-05-19)
 
 ### [0.1.5](https://github.com/armakuni/circleci-context-validator/compare/v0.1.4...v0.1.5) (2022-05-16)

@@ -1,6 +1,6 @@
 {
   "name": "@armakuni/circleci-context-validator",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Circle Context Validation in Code",
   "author": "@tomphp @d3vadv3ntur3s",
   "bin": {
