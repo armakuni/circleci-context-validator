@@ -447,7 +447,7 @@
     supports-color "^8.1.1"
     tslib "^2"
 
-"@oclif/core@^1", "@oclif/core@^1.19.1", "@oclif/core@^1.2.1", "@oclif/core@^1.6.4":
+"@oclif/core@^1", "@oclif/core@^1.19.1", "@oclif/core@^1.2.1", "@oclif/core@^1.20.0", "@oclif/core@^1.6.4":
   version "1.20.2"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-1.20.2.tgz#724713086355d693e578960f72c7e2d14fd3e7c3"
   integrity sha512-c6CpDbDPS9UuKwGoajzsjrjfnwQywWEV3WI5FDvb87h0/WW2tGf1QwHUWgdKOojafEcMAa9DnP5j+mXdUTtpCg==
@@ -503,12 +503,12 @@
     fast-levenshtein "^3.0.0"
     lodash "^4.17.21"
 
-"@oclif/plugin-warn-if-update-available@^2.0.10", "@oclif/plugin-warn-if-update-available@^2.0.4":
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-warn-if-update-available/-/plugin-warn-if-update-available-2.0.10.tgz#6ab726512870e4e6bed2f25759efa0be1ab46f65"
-  integrity sha512-HO+PB+/On33iGmsY8XI7957/XctWUupoVAjqQMmkQNygv99/fGcCh/9I4BHgD2xxuT0uZku5urMZi1jgRQXMOg==
+"@oclif/plugin-warn-if-update-available@^2.0.12", "@oclif/plugin-warn-if-update-available@^2.0.4":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-warn-if-update-available/-/plugin-warn-if-update-available-2.0.12.tgz#ed6bc2cce975099cb9b0db784592c575da2712ca"
+  integrity sha512-4Z1JE1jff4Tb7+u1BSH39SIl4fjDUxWrtATMji9pyb7QqEnJgIJGlZQbGMpfg3WJCufqc4Ao75Q/o71PSQrvAw==
   dependencies:
-    "@oclif/core" "^1.19.1"
+    "@oclif/core" "^1.20.0"
     chalk "^4.1.0"
     debug "^4.1.0"
     fs-extra "^9.0.1"
