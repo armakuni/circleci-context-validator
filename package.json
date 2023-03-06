@@ -19,7 +19,7 @@
   "dependencies": {
     "@oclif/core": "^1",
     "@oclif/plugin-help": "^5",
-    "@oclif/plugin-warn-if-update-available": "^2.0.18",
+    "@oclif/plugin-warn-if-update-available": "^2.0.30",
     "@types/js-yaml": "^4.0.5",
     "ajv": "^8.11.0",
     "better-ajv-errors": "^1.2.0",
