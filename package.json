@@ -25,7 +25,7 @@
     "better-ajv-errors": "^1.2.0",
     "chalk": "^4.1.2",
     "js-yaml": "^4.1.0",
-    "node-fetch": "^2.2.0"
+    "node-fetch": "^2.6.13"
   },
   "devDependencies": {
     "@oclif/test": "^2",
@@ -33,7 +33,7 @@
     "@types/chai-as-promised": "^7.1.5",
     "@types/mocha": "^9.1.1",
     "@types/node": "^16.18.23",
-    "@types/node-fetch": "^2.6.1",
+    "@types/node-fetch": "^2.6.4",
     "chai": "^4",
     "chai-as-promised": "^7.1.1",
     "eslint": "^7.32.0",
