@@ -34,15 +34,3 @@ workflows:
             - release-management/test-package-latest-linux
             - release-management/test-package-v16-linux
 
-
-  dependabot-automerge:
-    triggers:
-      - schedule:
-          cron: '0 2,5,8,11 * * *'
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - release-management/dependabot-automerge:
-          context: context-validator-ci
