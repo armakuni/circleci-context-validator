@@ -15,3 +15,6 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
     rebase-strategy: "auto"
+    commit-message:
+      prefix: fix
+      prefix-development: chore
