@@ -2,9 +2,9 @@ pull_request_rules:
   - name: "Automatic merge when CI passes"
     conditions:
       - author=dependabot[bot]
-      - check-success=test-package-latest-linux
-      - check-success=test-package-lts-linux
-      - check-success=test-package-v16-linux
+      - "check-success=ci/circleci: test-package-latest-linux"
+      - "check-success=ci/circleci: check-success=test-package-lts-linux"
+      - "check-success=ci/circleci: check-success=test-package-v16-linux"
     actions:
       queue:
         method: merge
@@ -15,6 +15,6 @@ queue_rules:
     batch_max_wait_time: 30 min
     queue_conditions:
       - author=dependabot[bot]
-      - check-success=test-package-latest-linux
-      - check-success=test-package-lts-linux
-      - check-success=test-package-v16-linux
+      - "check-success=ci/circleci: check-success=test-package-latest-linux"
+      - "check-success=ci/circleci: check-success=test-package-lts-linux"
+      - "check-success=ci/circleci: check-success=test-package-v16-linux"
