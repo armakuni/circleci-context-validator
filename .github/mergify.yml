@@ -1,14 +1,9 @@
+
 pull_request_rules:
-  - name: "Automatic merge when CI passes"
-    conditions:
-      - author=dependabot[bot]
-      - "check-success=ci/circleci: test-package-latest-linux"
-      - "check-success=ci/circleci: test-package-lts-linux"
-      - "check-success=ci/circleci: test-package-v16-linux"
+  - name: Automatic merge when CI passes
+    conditions: []
     actions:
       queue:
-        method: merge
-
 queue_rules:
   - name: dep-update
     batch_size: 10
@@ -18,3 +13,5 @@ queue_rules:
       - "check-success=ci/circleci: test-package-latest-linux"
       - "check-success=ci/circleci: test-package-lts-linux"
       - "check-success=ci/circleci: test-package-v16-linux"
+    merge_conditions: []
+    merge_method: merge
